@@ -1,0 +1,53 @@
+{
+    "U2D2": {
+        "port": "/dev/ttyUSB0",
+        "baudrate": 57600,
+        "protocolVersion": 2
+    },
+    "thumb" : {
+        "d1":{
+            "ID":11,
+            "upperLimit":1960,
+            "lowerLimit":2780,
+            "mechanicalScaleFactor":1,
+            "zeroPoint":2000,
+            "maxCurrentMilliamps":1000,
+            "minCurrentMilliamps":100,
+            "forceScaleFactor":1
+        },
+        "d2":{
+            "ID":12,
+            "upperLimit":2313,
+            "lowerLimit":1400,
+            "mechanicalScaleFactor":1,
+            "zeroPoint":2000,
+            "maxCurrentMilliamps":1000,
+            "minCurrentMilliamps":100,
+            "forceScaleFactor":1
+        }
+    } ,
+    "finger1" : {
+        "d1":{
+            "ID":1,
+            "upperLimit":3200,
+            "lowerLimit":1980,
+            "mechanicalScaleFactor":1,
+            "zeroPoint":2800,
+            "maxCurrentMilliamps":1000,
+            "minCurrentMilliamps":100,
+            "forceScaleFactor":1
+        }
+    } ,
+    "finger2" : {
+        "d1":{
+            "ID":2,
+            "upperLimit":2320,
+            "lowerLimit":1070,
+            "mechanicalScaleFactor":1,
+            "zeroPoint":1800,
+            "maxCurrentMilliamps":1000,
+            "minCurrentMilliamps":100,
+            "forceScaleFactor":1
+        }
+    }
+}
