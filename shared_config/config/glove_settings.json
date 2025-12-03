@@ -4,6 +4,10 @@
         "baudrate": 57600,
         "protocolVersion": 2
     },
+    "encoder_serial": {
+        "port": "/dev/ttyUSB1",
+        "baudrate": 115200
+    },
     "thumb" : {
         "d1":{
             "ID":11,
@@ -24,6 +28,36 @@
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
+        },
+        "e1":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e2":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e3":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e4":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "links":{
+            "origin":{
+                "x":0,
+                "y":-10,
+                "z":5
+            },
+            "l1":40,
+            "l2":40,
+            "l3":15,
+            "l4":45,
+            "l5":55,
+            "l6":55,
+            "l7":40
         }
     } ,
     "finger1" : {
@@ -36,6 +70,29 @@
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
+        },
+        "e1":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e2":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e3":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "links":{
+            "origin":{
+                "x":0,
+                "y":0,
+                "z":15
+            },
+            "l1":75,
+            "l2":95,
+            "l3":75,
+            "l4":40
         }
     } ,
     "finger2" : {
@@ -48,6 +105,29 @@
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
+        },
+        "e1":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e2":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "e3":{
+            "midpoint":180,
+            "scale":1.0
+        },
+        "links":{
+            "origin":{
+                "x":20,
+                "y":0,
+                "z":15
+            },
+            "l1":75,
+            "l2":95,
+            "l3":75,
+            "l4":40
         }
     }
 }
