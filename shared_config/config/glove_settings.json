@@ -13,8 +13,8 @@
             "ID":11,
             "upperLimit":1960,
             "lowerLimit":2780,
-            "mechanicalScaleFactor":1,
-            "zeroPoint":2000,
+            "mechanicalScaleFactor":0.087891,
+            "zeroPoint":2032,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
@@ -23,8 +23,8 @@
             "ID":12,
             "upperLimit":2313,
             "lowerLimit":1400,
-            "mechanicalScaleFactor":1,
-            "zeroPoint":2000,
+            "mechanicalScaleFactor":0.087891,
+            "zeroPoint":2057,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
@@ -65,8 +65,8 @@
             "ID":1,
             "upperLimit":3200,
             "lowerLimit":1980,
-            "mechanicalScaleFactor":1,
-            "zeroPoint":2800,
+            "mechanicalScaleFactor":0.087891,
+            "zeroPoint":2789,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
@@ -100,8 +100,8 @@
             "ID":2,
             "upperLimit":2320,
             "lowerLimit":1070,
-            "mechanicalScaleFactor":1,
-            "zeroPoint":1800,
+            "mechanicalScaleFactor":0.087891,
+            "zeroPoint":1759,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
