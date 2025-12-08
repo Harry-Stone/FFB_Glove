@@ -1,0 +1,426 @@
+<?xml version="1.0" ?>
+<robot name="glove_hand">
+
+  <!-- Root -->
+  <link name="hand_base"/>
+
+  <!-- ======================== FINGER 1 CHAIN ======================== -->
+  <!-- base origin for finger1 -->
+  <link name="finger1_origin">
+    <visual>
+      <geometry><sphere radius="0.025"/></geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.025"/></geometry>
+    </collision>
+  </link>
+  <joint name="finger1_origin_joint" type="fixed">
+    <parent link="hand_base"/>
+    <child  link="finger1_origin"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <!-- finger1 links (lengths: 65,90,75,30,10 mm -> meters) -->
+  <link name="finger1_l0">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.065"/></geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.5708 0"/>
+      <material name="cyan"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.065"/></geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- joint0: base -> l0 (rotation about Z) -->
+  <joint name="finger1_joint0" type="revolute">
+    <parent link="finger1_origin"/>
+    <child  link="finger1_l0"/>
+    <origin xyz="0 0 0"/>
+    <axis  xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger1_l1">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.090"/></geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.5708 0"/>
+      <material name="cyan"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.090"/></geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- joint1: l0 -> l1 (rotation about Y) -->
+  <joint name="finger1_joint1" type="revolute">
+    <parent link="finger1_l0"/>
+    <child  link="finger1_l1"/>
+    <!-- parent link length (m) -->
+    <origin xyz="0.065 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger1_l2">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.075"/></geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.5708 0"/>
+      <material name="cyan"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.075"/></geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- joint2: l1 -> l2 (rotation about Y) -->
+  <joint name="finger1_joint2" type="revolute">
+    <parent link="finger1_l1"/>
+    <child  link="finger1_l2"/>
+    <origin xyz="0.090 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger1_l3">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.030"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+      <material name="magenta"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.030"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- joint3: l2 -> l3 (rotation about Y) -->
+  <joint name="finger1_joint3" type="revolute">
+    <parent link="finger1_l2"/>
+    <child  link="finger1_l3"/>
+    <origin xyz="0.075 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger1_l4">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.010"/></geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.5708 0"/>
+      <material name="magenta"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.010"/></geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- joint4: l3 -> l4 (rotation about Y) -->
+  <joint name="finger1_joint4" type="revolute">
+    <parent link="finger1_l3"/>
+    <child  link="finger1_l4"/>
+    <origin xyz="0.030 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <!-- ======================== FINGER 2 CHAIN ======================== -->
+  <link name="finger2_origin">
+    <visual>
+      <geometry><sphere radius="0.025"/></geometry>
+      <material name="yellow"/>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.025"/></geometry>
+    </collision>
+  </link>
+  <joint name="finger2_origin_joint" type="fixed">
+    <parent link="hand_base"/>
+    <child  link="finger2_origin"/>
+    <origin xyz="0 -0.025 0"/>
+  </joint>
+
+  <!-- finger2 links (same lengths as finger1) -->
+  <link name="finger2_l0">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.065"/></geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.5708 0"/>
+      <material name="purple"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.065"/></geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <joint name="finger2_joint0" type="revolute">
+    <parent link="finger2_origin"/>
+    <child  link="finger2_l0"/>
+    <origin xyz="0 0 0"/>
+    <axis  xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger2_l1">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.090"/></geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.5708 0"/>
+      <material name="purple"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.090"/></geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <joint name="finger2_joint1" type="revolute">
+    <parent link="finger2_l0"/>
+    <child  link="finger2_l1"/>
+    <origin xyz="0.065 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger2_l2">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.075"/></geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.5708 0"/>
+      <material name="purple"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.075"/></geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <joint name="finger2_joint2" type="revolute">
+    <parent link="finger2_l1"/>
+    <child  link="finger2_l2"/>
+    <origin xyz="0.090 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger2_l3">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.030"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+      <material name="purple"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.030"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <joint name="finger2_joint3" type="revolute">
+    <parent link="finger2_l2"/>
+    <child  link="finger2_l3"/>
+    <origin xyz="0.075 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="finger2_l4">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.010"/></geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.5708 0"/>
+      <material name="purple"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.010"/></geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <joint name="finger2_joint4" type="revolute">
+    <parent link="finger2_l3"/>
+    <child  link="finger2_l4"/>
+    <origin xyz="0.030 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <!-- ======================== THUMB CHAIN ======================== -->
+  <link name="thumb_origin">
+    <visual>
+      <geometry><sphere radius="0.025"/></geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <geometry><sphere radius="0.025"/></geometry>
+    </collision>
+  </link>
+  <joint name="thumb_origin_joint" type="fixed">
+    <parent link="hand_base"/>
+    <child  link="thumb_origin"/>
+    <origin xyz="-0.025 0 0"/>
+  </joint>
+
+  <!-- thumb lengths (mm -> m): [35,45,25,40,55,55,30,20] -->
+  <link name="thumb_l0">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.040"/></geometry>
+      <origin xyz="0.0175 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.040"/></geometry>
+      <origin xyz="0.0175 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint0 (Z) -->
+  <joint name="thumb_joint0" type="revolute">
+    <parent link="thumb_origin"/>
+    <child  link="thumb_l0"/>
+    <origin xyz="0 0 0"/>
+    <axis  xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l1">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.04"/></geometry>
+      <origin xyz="0.0225 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.04"/></geometry>
+      <origin xyz="0.0225 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint1 (Y) -->
+  <joint name="thumb_joint1" type="revolute">
+    <parent link="thumb_l0"/>
+    <child  link="thumb_l1"/>
+    <origin xyz="0.035 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l2">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.015"/></geometry>
+      <origin xyz="0.0125 0 0" rpy="0 1.5708 0"/>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.015"/></geometry>
+      <origin xyz="0.0125 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint2 (Z) -->
+  <joint name="thumb_joint2" type="revolute">
+    <parent link="thumb_l1"/>
+    <child  link="thumb_l2"/>
+    <origin xyz="0.045 0 0"/>
+    <axis  xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l3">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.045"/></geometry>
+      <origin xyz="0.020 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.045"/></geometry>
+      <origin xyz="0.020 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint3 (Z) -->
+  <joint name="thumb_joint3" type="revolute">
+    <parent link="thumb_l2"/>
+    <child  link="thumb_l3"/>
+    <origin xyz="0.025 0 0"/>
+    <axis  xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l4">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.055"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.055"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint4 (Y) -->
+  <joint name="thumb_joint4" type="revolute">
+    <parent link="thumb_l3"/>
+    <child  link="thumb_l4"/>
+    <origin xyz="0.040 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l5">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.055"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.055"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint5 (Z) -->
+  <joint name="thumb_joint5" type="revolute">
+    <parent link="thumb_l4"/>
+    <child  link="thumb_l5"/>
+    <origin xyz="0.055 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l6">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.040"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.040"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint6 (Y) -->
+  <joint name="thumb_joint6" type="revolute">
+    <parent link="thumb_l5"/>
+    <child  link="thumb_l6"/>
+    <origin xyz="0.055 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <link name="thumb_l7">
+    <visual>
+      <geometry><cylinder radius="0.01" length="0.020"/></geometry>
+      <origin xyz="0.010 0 0" rpy="0 1.5708 0"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="0.01" length="0.020"/></geometry>
+      <origin xyz="0.010 0 0" rpy="0 1.5708 0"/>
+    </collision>
+  </link>
+  <!-- thumb joint7 (Z) -->
+  <joint name="thumb_joint7" type="revolute">
+    <parent link="thumb_l6"/>
+    <child  link="thumb_l7"/>
+    <origin xyz="0.030 0 0"/>
+    <axis  xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="1.5708"/>
+  </joint>
+
+  <!-- ======================== MATERIALS ======================== -->
+  <material name="red"><color rgba="1 0 0 1"/></material>
+  <material name="blue"><color rgba="0 0 1 1"/></material>
+  <material name="green"><color rgba="0 1 0 1"/></material>
+  <material name="orange"><color rgba="1 0.5 0 1"/></material>
+  <material name="cyan"><color rgba="0 1 1 1"/></material>
+  <material name="yellow"><color rgba="1 1 0 1"/></material>
+  <material name="purple"><color rgba="0.627 0 0.627 1"/></material>
+  <material name="magenta"><color rgba="1 0 1 1"/></material>
+  <material name="lime"><color rgba="0 1 0 1"/></material>
+
+</robot>

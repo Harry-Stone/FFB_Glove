@@ -6,6 +6,7 @@ from std_msgs.msg import String, Float32MultiArray
 from threading import Lock
 from ament_index_python.packages import get_package_share_directory
 import numpy as np
+import math
 
 config_package_name = 'shared_config' 
 config_file_name = 'glove_settings.json'
@@ -255,4 +256,51 @@ class StateManager(Node):
         """
         with self.lock:
             return self.serial_data, self.dynamixel_positions
+        
+    
+    def create_urdf_publisher_node(self):
+        """Create a publisher node that sends joint values to control a URDF"""
+        self.joint_names = [
+            'finger1_joint0', 'finger1_joint1', 'finger1_joint2', 'finger1_joint3', 'finger1_joint4',
+            'finger2_joint0', 'finger2_joint1', 'finger2_joint2', 'finger2_joint3', 'finger2_joint4',
+            'thumb_joint0', 'thumb_joint1', 'thumb_joint2', 'thumb_joint3', 'thumb_joint4',
+            'thumb_joint5', 'thumb_joint6', 'thumb_joint7'
+        ]
+        
+        self.base_positions = [
+            0.12673857656261012, -0.8086398227678077, 1.5708, 1.0967606203126732, 0.05745128772331998,
+            -0.15041057879455066, -0.7393525339285175, 1.5708, 1.0274733314733828, 0,
+            1.5708, 1.5708, -1.5708, 0.19602586540190026, -0.7047088895088723,
+            1.5708, 1.131404264732318, 0.8
+        ]
+        
+        self.joint_pub = self.create_publisher(Float32MultiArray, 'joint_states', 10)
+        self.timer = self.create_timer(0.1, self.publish_joint_states)
+        self.time_step = 0.0
+        self.amplitude = 0.3
+        self.frequency = 1.0
 
+    def publish_joint_states(self):
+        """Publish smoothly varying joint states centered on base positions"""
+        self.time_step += 0.1
+        
+        msg = Float32MultiArray()
+        msg.data = [
+            base + self.amplitude * math.sin(2 * math.pi * self.frequency * self.time_step + i * 0.5)
+            for i, base in enumerate(self.base_positions)
+        ]
+        
+        self.joint_pub.publish(msg)
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = StateManager()
+    node.create_urdf_publisher_node()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()
