@@ -8,11 +8,24 @@
   <!-- Base -->
   <link name="F1_base">
     <visual>
-      <geometry><sphere radius="0.003"/></geometry>
+      <child link="F2_base"/>
+      <child link="T_base"/>
+      <geometry><sphere radius="0.01"/></geometry>
       <origin xyz="0 0 0"/>
     </visual>
   </link>
 
+  <joint name="F2_OS" type="fixed">
+    <parent link="F1_base"/>
+    <child  link="F2_base"/>
+    <origin xyz="0 -0.025 0"/>
+  </joint>
+
+  <joint name="T_OS" type="fixed">
+    <parent link="F1_base"/>
+    <child  link="T_base"/>
+    <origin xyz="-0.025 0 0" />
+  </joint>
   <!-- Joints + Links -->
   <!-- Lengths: 65, 90, 75, 30, 10 mm -->
   <!-- in meters: 0.065, 0.090, 0.075, 0.030, 0.010 -->
@@ -31,7 +44,7 @@
       <geometry>
         <cylinder length="0.065" radius="0.004"/>
       </geometry>
-      <origin xyz="0.0325 0 0" rpy="0 0 0"/>
+      <origin xyz="0.0325 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -50,7 +63,7 @@
       <geometry>
         <cylinder length="0.090" radius="0.004"/>
       </geometry>
-      <origin xyz="0.045 0 0"/>
+      <origin xyz="0.045 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -69,7 +82,7 @@
       <geometry>
         <cylinder length="0.075" radius="0.004"/>
       </geometry>
-      <origin xyz="0.0375 0 0"/>
+      <origin xyz="0.0375 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -88,7 +101,7 @@
       <geometry>
         <cylinder length="0.030" radius="0.004"/>
       </geometry>
-      <origin xyz="0.015 0 0"/>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -107,7 +120,7 @@
       <geometry>
         <cylinder length="0.010" radius="0.004"/>
       </geometry>
-      <origin xyz="0.005 0 0"/>
+      <origin xyz="0.005 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -120,7 +133,7 @@
   <link name="F2_base">
     <visual>
       <parent link="F1_base"/>
-      <geometry><sphere radius="0.003"/></geometry>
+      <geometry><sphere radius="0.01"/></geometry>
       <origin xyz="0 -0.025 0"/>
     </visual>
   </link>
@@ -138,7 +151,7 @@
   <link name="F2_link0">
     <visual>
       <geometry><cylinder length="0.065" radius="0.004"/></geometry>
-      <origin xyz="0.0325 0 0"/>
+      <origin xyz="0.0325 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -153,7 +166,7 @@
   <link name="F2_link1">
     <visual>
       <geometry><cylinder length="0.090" radius="0.004"/></geometry>
-      <origin xyz="0.045 0 0"/>
+      <origin xyz="0.045 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -168,7 +181,7 @@
   <link name="F2_link2">
     <visual>
       <geometry><cylinder length="0.075" radius="0.004"/></geometry>
-      <origin xyz="0.0375 0 0"/>
+      <origin xyz="0.0375 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -183,7 +196,7 @@
   <link name="F2_link3">
     <visual>
       <geometry><cylinder length="0.030" radius="0.004"/></geometry>
-      <origin xyz="0.015 0 0"/>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -198,7 +211,7 @@
   <link name="F2_link4">
     <visual>
       <geometry><cylinder length="0.010" radius="0.004"/></geometry>
-      <origin xyz="0.005 0 0"/>
+      <origin xyz="0.005 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -210,9 +223,9 @@
 
   <link name="T_base">
     <visual>
-      <geometry><sphere radius="0.003"/></geometry>
+      <geometry><sphere radius="0.01"/></geometry>
       <parent link="F1_base"/>
-      <origin xyz="-0.025 0 0"/>
+      <origin xyz="-0.025 0 0" />
     </visual>
   </link>
 
@@ -227,13 +240,13 @@
     <child  link="T_link0"/>
     <axis xyz="0 0 1"/>
     <limit effort="1" velocity="10"/>
-    <origin xyz="-0.025 0 0"/>
+    <origin xyz="-0.025 0 0" rpy="0 0 1.571"/>
   </joint>
 
   <link name="T_link0">
     <visual>
       <geometry><cylinder length="0.035" radius="0.004"/></geometry>
-      <origin xyz="0.0175 0 0"/>
+      <origin xyz="0.0175 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -249,7 +262,7 @@
   <link name="T_link1">
     <visual>
       <geometry><cylinder length="0.045" radius="0.004"/></geometry>
-      <origin xyz="0.0225 0 0"/>
+      <origin xyz="0.0225 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -265,7 +278,7 @@
   <link name="T_link2">
     <visual>
       <geometry><cylinder length="0.025" radius="0.004"/></geometry>
-      <origin xyz="0.0125 0 0"/>
+      <origin xyz="0.0125 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -281,7 +294,7 @@
   <link name="T_link3">
     <visual>
       <geometry><cylinder length="0.040" radius="0.004"/></geometry>
-      <origin xyz="0.020 0 0"/>
+      <origin xyz="0.020 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -297,7 +310,7 @@
   <link name="T_link4">
     <visual>
       <geometry><cylinder length="0.055" radius="0.004"/></geometry>
-      <origin xyz="0.0275 0 0"/>
+      <origin xyz="0.0275 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -313,7 +326,7 @@
   <link name="T_link5">
     <visual>
       <geometry><cylinder length="0.055" radius="0.004"/></geometry>
-      <origin xyz="0.0275 0 0"/>
+      <origin xyz="0.0275 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -328,8 +341,8 @@
 
   <link name="T_link6">
     <visual>
-      <geometry><cylinder length="0.030" radius="0.004"/></geometry>
-      <origin xyz="0.015 0 0"/>
+      <geometry><cylinder length="0.030" radius="0.004" rpy="0 0 0"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
@@ -345,7 +358,7 @@
   <link name="T_link7">
     <visual>
       <geometry><cylinder length="0.020" radius="0.004"/></geometry>
-      <origin xyz="0.010 0 0"/>
+      <origin xyz="0.010 0 0" rpy="0 1.571 0"/>
     </visual>
   </link>
 
