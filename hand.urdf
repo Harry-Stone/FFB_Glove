@@ -1,0 +1,365 @@
+<?xml version="1.0"?>
+<robot name="hand_model">
+
+  <!-- ========================= -->
+  <!-- ======== INDEX (F1) ===== -->
+  <!-- ========================= -->
+
+  <!-- Base -->
+  <link name="F1_base">
+    <visual>
+      <child link="F2_base"/>
+      <child link="T_base"/>
+      <geometry><sphere radius="0.01"/></geometry>
+      <origin xyz="0 0 0"/>
+    </visual>
+  </link>
+
+  <joint name="F2_OS" type="fixed">
+    <parent link="F1_base"/>
+    <child  link="F2_base"/>
+    <origin xyz="0 -0.025 0"/>
+  </joint>
+
+  <joint name="T_OS" type="fixed">
+    <parent link="F1_base"/>
+    <child  link="T_base"/>
+    <origin xyz="-0.025 0 0" />
+  </joint>
+  <!-- Joints + Links -->
+  <!-- Lengths: 65, 90, 75, 30, 10 mm -->
+  <!-- in meters: 0.065, 0.090, 0.075, 0.030, 0.010 -->
+
+  <!-- Joint 0 (global Z) -->
+  <joint name="F1_joint0" type="continuous">
+    <parent link="F1_base"/>
+    <child  link="F1_link0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="F1_link0">
+    <visual>
+      <geometry>
+        <cylinder length="0.065" radius="0.004"/>
+      </geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+  <!-- Joint 1 (local Y) -->
+  <joint name="F1_joint1" type="continuous">
+    <parent link="F1_link0"/>
+    <child  link="F1_link1"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.065 0 0"/>
+  </joint>
+
+  <link name="F1_link1">
+    <visual>
+      <geometry>
+        <cylinder length="0.090" radius="0.004"/>
+      </geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+  <!-- Joint 2 (local Y) -->
+  <joint name="F1_joint2" type="continuous">
+    <parent link="F1_link1"/>
+    <child  link="F1_link2"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.090 0 0"/>
+  </joint>
+
+  <link name="F1_link2">
+    <visual>
+      <geometry>
+        <cylinder length="0.075" radius="0.004"/>
+      </geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+  <!-- Joint 3 (local Y) -->
+  <joint name="F1_joint3" type="continuous">
+    <parent link="F1_link2"/>
+    <child  link="F1_link3"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.075 0 0"/>
+  </joint>
+
+  <link name="F1_link3">
+    <visual>
+      <geometry>
+        <cylinder length="0.030" radius="0.004"/>
+      </geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+  <!-- Joint 4 (local Y) -->
+  <joint name="F1_joint4" type="continuous">
+    <parent link="F1_link3"/>
+    <child  link="F1_link4"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.030 0 0"/>
+  </joint>
+
+  <link name="F1_link4">
+    <visual>
+      <geometry>
+        <cylinder length="0.010" radius="0.004"/>
+      </geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+
+  <!-- ========================== -->
+  <!-- ======== MIDDLE (F2) ===== -->
+  <!-- ========================== -->
+
+  <link name="F2_base">
+    <visual>
+      <parent link="F1_base"/>
+      <geometry><sphere radius="0.01"/></geometry>
+      <origin xyz="0 0 0"/>
+    </visual>
+  </link>
+
+  <!-- Same lengths as F1 -->
+
+  <joint name="F2_joint0" type="continuous">
+    <parent link="F2_base"/>
+    <child  link="F2_link0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <link name="F2_link0">
+    <visual>
+      <geometry><cylinder length="0.065" radius="0.004"/></geometry>
+      <origin xyz="0.0325 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <joint name="F2_joint1" type="continuous">
+    <parent link="F2_link0"/>
+    <child  link="F2_link1"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.065 0 0"/>
+  </joint>
+
+  <link name="F2_link1">
+    <visual>
+      <geometry><cylinder length="0.090" radius="0.004"/></geometry>
+      <origin xyz="0.045 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <joint name="F2_joint2" type="continuous">
+    <parent link="F2_link1"/>
+    <child  link="F2_link2"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.090 0 0"/>
+  </joint>
+
+  <link name="F2_link2">
+    <visual>
+      <geometry><cylinder length="0.075" radius="0.004"/></geometry>
+      <origin xyz="0.0375 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <joint name="F2_joint3" type="continuous">
+    <parent link="F2_link2"/>
+    <child  link="F2_link3"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.075 0 0"/>
+  </joint>
+
+  <link name="F2_link3">
+    <visual>
+      <geometry><cylinder length="0.030" radius="0.004"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <joint name="F2_joint4" type="continuous">
+    <parent link="F2_link3"/>
+    <child  link="F2_link4"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.030 0 0"/>
+  </joint>
+
+  <link name="F2_link4">
+    <visual>
+      <geometry><cylinder length="0.010" radius="0.004"/></geometry>
+      <origin xyz="0.005 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+
+
+  <!-- ====================== -->
+  <!-- ======== THUMB ======= -->
+  <!-- ====================== -->
+
+  <link name="T_base">
+    <visual>
+      <geometry><sphere radius="0.01"/></geometry>
+      <parent link="F1_base"/>
+      <origin xyz="-0 0 0" />
+    </visual>
+  </link>
+
+  <!-- Thumb lengths (mm → m):
+       [35, 45, 25, 40, 55, 55, 30, 20]
+       => [0.035, 0.045, 0.025, 0.040, 0.055, 0.055, 0.030, 0.020]
+  -->
+
+  <!-- Joint 0 (Z) -->
+  <joint name="T_joint0" type="continuous">
+    <parent link="T_base"/>
+    <child  link="T_link0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="-0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="T_link0">
+    <visual>
+      <geometry><cylinder length="0.035" radius="0.004"/></geometry>
+      <origin xyz="0.0175 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 1 (Y) -->
+  <joint name="T_joint1" type="continuous">
+    <parent link="T_link0"/>
+    <child  link="T_link1"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.035 0 0"/>
+  </joint>
+
+  <link name="T_link1">
+    <visual>
+      <geometry><cylinder length="0.045" radius="0.004"/></geometry>
+      <origin xyz="0.0225 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 2 (Z) -->
+  <joint name="T_joint2" type="continuous">
+    <parent link="T_link1"/>
+    <child  link="T_link2"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.045 0 0"/>
+  </joint>
+
+  <link name="T_link2">
+    <visual>
+      <geometry><cylinder length="0.025" radius="0.004"/></geometry>
+      <origin xyz="0.0125 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 3 (Z) -->
+  <joint name="T_joint3" type="continuous">
+    <parent link="T_link2"/>
+    <child  link="T_link3"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.025 0 0"/>
+  </joint>
+
+  <link name="T_link3">
+    <visual>
+      <geometry><cylinder length="0.040" radius="0.004"/></geometry>
+      <origin xyz="0.020 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 4 (Y) -->
+  <joint name="T_joint4" type="continuous">
+    <parent link="T_link3"/>
+    <child  link="T_link4"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.040 0 0"/>
+  </joint>
+
+  <link name="T_link4">
+    <visual>
+      <geometry><cylinder length="0.055" radius="0.004"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 5 (Z) -->
+  <joint name="T_joint5" type="continuous">
+    <parent link="T_link4"/>
+    <child  link="T_link5"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.055 0 0"/>
+  </joint>
+
+  <link name="T_link5">
+    <visual>
+      <geometry><cylinder length="0.055" radius="0.004"/></geometry>
+      <origin xyz="0.0275 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 6 (Y) -->
+  <joint name="T_joint6" type="continuous">
+    <parent link="T_link5"/>
+    <child  link="T_link6"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.055 0 0"/>
+  </joint>
+
+  <link name="T_link6">
+    <visual>
+      <geometry><cylinder length="0.030" radius="0.004" rpy="0 0 0"/></geometry>
+      <origin xyz="0.015 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+  <!-- Joint 7 (Z) -->
+  <joint name="T_joint7" type="continuous">
+    <parent link="T_link6"/>
+    <child  link="T_link7"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" velocity="10"/>
+    <origin xyz="0.030 0 0"/>
+  </joint>
+
+  <link name="T_link7">
+    <visual>
+      <geometry><cylinder length="0.020" radius="0.004"/></geometry>
+      <origin xyz="0.010 0 0" rpy="0 1.571 0"/>
+    </visual>
+  </link>
+
+</robot>
