@@ -12,6 +12,7 @@ from sensor_msgs.msg import JointState
 # ros2 run robot_state_publisher robot_state_publisher --ros-args --params-file ~/glove/src/hand_description.yaml
 
 
+
 config_package_name = 'shared_config' 
 config_file_name = 'glove_settings.json'
 share_directory = get_package_share_directory(config_package_name)
@@ -218,7 +219,7 @@ class StateManager(Node):
         
         # Data storage for both topics
         self.serial_data = None
-        self.dynamixel_positions = None
+        self.dynamixel_positions = [0.0, 0.0, 0.0, 0.0]
         
         # Create subscriptions
         self.serial_sub = self.create_subscription(
@@ -244,10 +245,23 @@ class StateManager(Node):
             self.get_logger().debug(f'Received serial data: {self.serial_data}')
     
     def dynamixel_pos_callback(self, msg):
-        """Callback for dynamixel_pos topic"""
-        with self.lock:
-            self.dynamixel_positions = list(msg.data)
-            self.get_logger().debug(f'Received dynamixel positions: {self.dynamixel_positions}')
+        try:
+            raw = list(msg.data)
+
+            # Strict length check
+            if len(raw) != 4:
+                raise ValueError(f"Expected 4 motor positions, got {len(raw)}")
+
+            # Convert all values to real Python floats
+            cleaned = []
+            for v in raw:
+                cleaned.append(float(v))
+
+            with self.lock:
+                self.dynamixel_positions = cleaned
+
+        except Exception as e:
+            self.get_logger().warn(f"Ignoring invalid motor position msg: {e}")
     
     def read_sensor_data(self):
         """
@@ -284,6 +298,36 @@ class StateManager(Node):
         self.frequency = 1.0
 
 
+    def publish_joint_states_old(self):
+        self.time_step += 0.1
+
+        msg = JointState()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.name = self.joint_names
+    
+        #this is semi arbitrary motion for testing purposes
+        if False:
+            msg.position = [
+                base + self.amplitude * math.sin(2 * math.pi * self.frequency * self.time_step + i * 0.5)
+                for i, base in enumerate(self.base_positions)
+            ]
+        else:
+            msg.position = self.base_positions.copy()
+        #this will write the actual positions when available
+        #take the latest dynamixel positions and map them to joint positions
+        dynamixel_positions = self.read_sensor_data()
+
+        if dynamixel_positions is not None \
+                and len(dynamixel_positions) == 4 \
+                and all(isinstance(v, (float, int)) for v in dynamixel_positions):
+            self.get_logger().info(f'Updating joint positions with dynamixel data: {dynamixel_positions}')
+            msg.position[13] = float(dynamixel_positions[0])
+            msg.position[14] = float(dynamixel_positions[1])
+            msg.position[1]  = float(dynamixel_positions[2])
+            msg.position[6]  = float(dynamixel_positions[3])
+        else:
+            self.get_logger().warn("Invalid dynamixel data received")
+
     def publish_joint_states(self):
         self.time_step += 0.1
 
@@ -291,12 +335,37 @@ class StateManager(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = self.joint_names
 
-        msg.position = [
-            base + self.amplitude * math.sin(2 * math.pi * self.frequency * self.time_step + i * 0.5)
-            for i, base in enumerate(self.base_positions)
-        ]
+        # Ensure msg.position is a list of plain Python floats (defensive)
+        msg.position = [float(v) for v in self.base_positions]
 
+        # Read latest sensor values (unpack tuple correctly)
+        serial_data, dynamixel_positions = self.read_sensor_data()
+
+        # Validate and convert dynamixel_positions before using
+        valid = (
+            isinstance(dynamixel_positions, list)
+            and len(dynamixel_positions) == 4
+            and all(isinstance(v, (int, float)) for v in dynamixel_positions)
+        )
+
+        if valid:
+            # convert to plain Python floats explicitly
+            dp = [float(v) for v in dynamixel_positions]
+            self.get_logger().info(f'Updating joint positions with dynamixel data: {dp}')
+            # Map dynamixel to joints (index positions confirmed)
+            try:
+                msg.position[13] = math.radians(180)+math.radians(dp[0]*0.087891)
+                msg.position[14] = math.radians(180)+math.radians(dp[1]*0.087891)
+                msg.position[1]  = math.radians(225)+math.radians(dp[2]*-0.087891)
+                msg.position[6]  = math.radians(155)+math.radians(dp[3]*-0.087891)
+            except IndexError as e:
+                self.get_logger().error(f'Index error updating msg.position: {e}')
+        else:
+            self.get_logger().debug(f'Not updating from dynamixel (invalid): {dynamixel_positions}')
+
+        # Finally publish
         self.pub.publish(msg)
+
 
 
 def main(args=None):
