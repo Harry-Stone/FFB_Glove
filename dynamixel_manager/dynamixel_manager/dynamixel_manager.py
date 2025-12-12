@@ -8,8 +8,10 @@ import time
 import signal
 import sys
 from threading import Lock
+import math
 
 from ament_index_python.packages import get_package_share_directory
+
 config_package_name = 'shared_config' 
 config_file_name = 'glove_settings.json'
 share_directory = get_package_share_directory(config_package_name)
@@ -199,6 +201,7 @@ class DynamixelManagerNode(Node):
                         commands_to_apply[i]=0.0
                     elif pos < motor.lowerLimit:
                         commands_to_apply[i]=0.0
+                    
                     
                     positions.append(float(pos))
                     

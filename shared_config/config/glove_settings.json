@@ -1,11 +1,11 @@
 {
     "U2D2": {
-        "port": "/dev/ttyUSB0",
+        "port": "/dev/ttyUSB1",
         "baudrate": 57600,
         "protocolVersion": 2
     },
     "encoder_serial": {
-        "port": "/dev/ttyUSB1",
+        "port": "/dev/ttyUSB0",
         "baudrate": 115200
     },
     "thumb" : {
