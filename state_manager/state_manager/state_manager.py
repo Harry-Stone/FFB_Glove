@@ -9,6 +9,8 @@ import numpy as np
 import math
 from sensor_msgs.msg import JointState
 
+#source /opt/ros/humble/setup.bash
+#source ~/glove/install/setup.bash
 # ros2 run robot_state_publisher robot_state_publisher --ros-args --params-file ~/glove/src/hand_description.yaml
 
 
@@ -218,12 +220,12 @@ class StateManager(Node):
         self.lock = Lock()
         
         # Data storage for both topics
-        self.serial_data = None
+        self.serial_data = [180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0]
         self.dynamixel_positions = [0.0, 0.0, 0.0, 0.0]
         
         # Create subscriptions
         self.serial_sub = self.create_subscription(
-            String,
+            Float32MultiArray,
             'serial/data',
             self.serial_data_callback,
             10
@@ -240,9 +242,7 @@ class StateManager(Node):
     
     def serial_data_callback(self, msg):
         """Callback for serial/data topic"""
-        with self.lock:
-            self.serial_data = msg.data
-            self.get_logger().debug(f'Received serial data: {self.serial_data}')
+        self.serial_data = msg.data
     
     def dynamixel_pos_callback(self, msg):
         try:
@@ -285,7 +285,7 @@ class StateManager(Node):
         ]
 
         self.base_positions = [
-            0.12673857656261012, -0.8086398227678077, 1.5708, 1.0967606203126732, 0.05745128772331998,
+            0.0, -0.8086398227678077, 1.5708, 1.0967606203126732, 0.05745128772331998,
             -0.15041057879455066, -0.7393525339285175, 1.5708, 1.0274733314733828, 0,
             1.5708, 1.5708, -1.5708, 0.19602586540190026,
             -0.7047088895088723, 1.5708, 1.131404264732318, 0.8
@@ -352,12 +352,17 @@ class StateManager(Node):
             # convert to plain Python floats explicitly
             dp = [float(v) for v in dynamixel_positions]
             self.get_logger().info(f'Updating joint positions with dynamixel data: {dp}')
+            self.get_logger().info(f'Updating joint positions with serial data: {serial_data}')
             # Map dynamixel to joints (index positions confirmed)
             try:
-                msg.position[13] = math.radians(180)+math.radians(dp[0]*0.087891)
+                msg.position[13] = math.radians(180)+math.radians(dp[0]*0.087891) #fix this conversion later, youre double radian converting and adding offsets...
                 msg.position[14] = math.radians(180)+math.radians(dp[1]*0.087891)
                 msg.position[1]  = math.radians(225)+math.radians(dp[2]*-0.087891)
                 msg.position[6]  = math.radians(155)+math.radians(dp[3]*-0.087891)
+
+                msg.position[7] = math.radians(180)-math.radians(float(self.serial_data[1]))
+                msg.position[8] = math.radians(180)+math.radians(float(self.serial_data[2]))
+
             except IndexError as e:
                 self.get_logger().error(f'Index error updating msg.position: {e}')
         else:
