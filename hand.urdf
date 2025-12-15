@@ -318,7 +318,7 @@
   <joint name="T_joint5" type="continuous">
     <parent link="T_link4"/>
     <child  link="T_link5"/>
-    <axis xyz="0 0 1"/>
+    <axis xyz="0 1 0"/>
     <limit effort="1" velocity="10"/>
     <origin xyz="0.055 0 0"/>
   </joint>

@@ -359,9 +359,15 @@ class StateManager(Node):
                 msg.position[14] = math.radians(180)+math.radians(dp[1]*0.087891)
                 msg.position[1]  = math.radians(225)+math.radians(dp[2]*-0.087891)
                 msg.position[6]  = math.radians(155)+math.radians(dp[3]*-0.087891)
-
+                #index
                 msg.position[7] = math.radians(180)-math.radians(float(self.serial_data[1]))
                 msg.position[8] = math.radians(180)+math.radians(float(self.serial_data[2]))
+                #pointer
+                msg.position[2] = math.radians(180)-math.radians(float(self.serial_data[6]))
+                msg.position[3] = math.radians(180)+math.radians(float(self.serial_data[7]))
+                #thumb
+                msg.position[15] = math.radians(180)-math.radians(float(self.serial_data[3]))
+                msg.position[16] = math.radians(180)+math.radians(float(self.serial_data[8]))
 
             except IndexError as e:
                 self.get_logger().error(f'Index error updating msg.position: {e}')
