@@ -11,8 +11,8 @@
     "thumb" : {
         "d1":{
             "ID":11,
-            "upperLimit":1960,
-            "lowerLimit":2780,
+            "upperLimit":2780,
+            "lowerLimit":1960,
             "mechanicalScaleFactor":0.087891,
             "zeroPoint":2032,
             "maxCurrentMilliamps":1000,

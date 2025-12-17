@@ -292,7 +292,7 @@ class StateManager(Node):
         ]
 
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
-        self.timer = self.create_timer(0.1, self.publish_joint_states)
+        self.timer = self.create_timer(0.01, self.publish_joint_states)
         self.time_step = 0.0
         self.amplitude = 0.3
         self.frequency = 1.0
