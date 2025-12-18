@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<robot name="ffb_environment">
+
+  <!-- ================= WORLD ROOT ================= -->
+  <link name="ffb_world"/>
+
+  <!-- ================= FINGER CONTACT PLANE ================= -->
+  <link name="finger_plane">
+    <visual>
+      <!-- Plane located at z = -0.045 -->
+      <origin xyz="0 0 -0.045" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.2 0.2 0.002"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.2 0.2 1.0 0.35"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="finger_plane_joint" type="fixed">
+    <parent link="ffb_world"/>
+    <child link="finger_plane"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <!-- ================= THUMB ELLIPSE (Y–Z PLANE) ================= -->
+  <link name="thumb_ellipse">
+    <visual>
+      <!-- Rotate cylinder so its axis is X (Y–Z ellipse) -->
+      <origin xyz="0 0 0" rpy="1.5708 0 0"/>
+      <geometry>
+        <!-- Unit cylinder, scaled below -->
+        <cylinder radius="0.08" length="0.005"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.2 0.2 0.35"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="thumb_ellipse_joint" type="fixed">
+    <parent link="ffb_world"/>
+    <child link="thumb_ellipse"/>
+    <!-- Centered at origin; move via TF if needed -->
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <!-- ================= ELLIPSE SCALING ================= -->
+  <!-- Matches controller defaults: a=0.020, b=0.015 -->
+  <gazebo reference="thumb_ellipse">
+    <scale>0.020 0.015 1.0</scale>
+  </gazebo>
+
+</robot>
