@@ -7,7 +7,11 @@ from tf2_ros import Buffer, TransformListener
 from geometry_msgs.msg import TransformStamped
 
 from std_msgs.msg import Float32MultiArray
-import math
+
+def distance3D(x1, y1, z1, x2, y2, z2):
+    return ((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2) ** 0.5
+
+k = 0.1
 
 
 class MultiFingerEllipticalFFB(Node):
@@ -53,45 +57,12 @@ class MultiFingerEllipticalFFB(Node):
             10
         )
 
-        # --- Parameters ---
-        self.trigger_threshold = float(
-            self.declare_parameter(
-                'trigger_threshold', -0.045
-            ).value
-        )
-
-        self.free_current = float(
-            self.declare_parameter(
-                'free_current', .0
-            ).value
-        )
-
-        # Ellipse parameters (meters)
-        self.ellipse_a = float(
-            self.declare_parameter('ellipse_a', 0.020).value
-        )  # Y radius
-
-        self.ellipse_b = float(
-            self.declare_parameter('ellipse_b', 0.020).value
-        )  # Z radius
-
-        self.stiffness = float(
-            self.declare_parameter('stiffness', 6000.0).value
-        )  # mA per unit penetration
-
-        self.max_current = float(
-            self.declare_parameter('max_current', 200.0).value
-        )
-
-        self.get_logger().info(
-            f'Multi-finger elliptical FFB started '
-            f'({self.control_rate_hz:.0f} Hz)'
-        )
+        self.get_logger().info('Bare-bones FFB node started')
 
     def timer_callback(self):
         cmd = [0.0, 0.0, 0.0, 0.0]
 
-        # ---------- Fingers (simple plane) ----------
+        # ---------- Fingers: lookup transforms and map to motors ----------
         for finger in self.fingers:
             try:
                 tf: TransformStamped = self.tf_buffer.lookup_transform(
@@ -100,58 +71,41 @@ class MultiFingerEllipticalFFB(Node):
                     rclpy.time.Time()
                 )
 
+                x = tf.transform.translation.x
+                y = tf.transform.translation.y
                 z = tf.transform.translation.z
-                cmd[finger['motor']] = (
-                    self.max_current if z < self.trigger_threshold
-                    else self.free_current
-                )
+                dist = distance3D(0, 0, -0.06, x, y , z)
+                if dist < 0.02:
+                    cmd[finger['motor']] = float(k/dist)
+                else:
+                    cmd[finger['motor']] = 0.0
 
             except Exception as e:
-                self.get_logger().warn(
-                    f'TF failed for {finger["link"]}: {e}'
-                )
+                self.get_logger().warn(f'TF failed for {finger["link"]}: {e}')
 
-        # ---------- Thumb (elliptical field in Y–Z) ----------
+        # ---------- Thumb: lookup transforms and map Y/Z to motors ----------
         try:
             tf: TransformStamped = self.tf_buffer.lookup_transform(
                 self.base_frame,
                 self.thumb_link,
                 rclpy.time.Time()
             )
-
+            
+            x = tf.transform.translation.x
             y = tf.transform.translation.y
             z = tf.transform.translation.z
-
-            # Ellipse distance
-            d = math.sqrt(
-                (y / self.ellipse_a) ** 2 +
-                (z / self.ellipse_b) ** 2
-            )
-
-            if d > 1.0:
-                penetration = d - 1.0
-                force = self.stiffness * penetration
-
-                # Directional scaling
-                fy = force * (y / (self.ellipse_a ** 2))
-                fz = force * (z / (self.ellipse_b ** 2))
-
-                # Clamp
-                fy = max(min(fy, self.max_current), -self.max_current)
-                fz = max(min(fz, self.max_current), -self.max_current)
-
-                cmd[self.motor_map['thumb_y']] = abs(fy)
-                cmd[self.motor_map['thumb_z']] = abs(fz)
+            dist = distance3D(0, 0, -0.06, x, y , z)
+            
+            if dist < 0.02:
+                cmd[self.motor_map['thumb_y']] = float(k/distance3D(0,0,-0.06,0,y,-0.06))
+                cmd[self.motor_map['thumb_z']] = float(k/distance3D(0,0,-0.06,0,0,z))
             else:
-                cmd[self.motor_map['thumb_y']] = self.free_current
-                cmd[self.motor_map['thumb_z']] = self.free_current
+                cmd[self.motor_map['thumb_y']] = 0.0
+                cmd[self.motor_map['thumb_z']] = 0.0 
 
         except Exception as e:
-            self.get_logger().warn(
-                f'TF failed for thumb ({self.thumb_link}): {e}'
-            )
-
-        # ---------- Publish ----------
+            self.get_logger().warn(f'TF failed for thumb ({self.thumb_link}): {e}')
+        # ---------- Publish raw lookup values to FFB topic ----------
         msg = Float32MultiArray()
         msg.data = cmd
         self.ffb_publisher.publish(msg)
