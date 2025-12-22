@@ -358,7 +358,7 @@ class StateManager(Node):
                 msg.position[13] = math.radians(180)+math.radians(dp[0]*0.087891) #fix this conversion later, youre double radian converting and adding offsets...
                 msg.position[14] = math.radians(180)+math.radians(dp[1]*0.087891)
                 msg.position[1]  = math.radians(225)+math.radians(dp[2]*-0.087891)
-                msg.position[6]  = math.radians(155)+math.radians(dp[3]*-0.087891)
+                msg.position[6]  = math.radians(45)+math.radians(dp[3]*-0.087891)
                 #index
                 msg.position[7] = math.radians(180)-math.radians(float(self.serial_data[1]))
                 msg.position[8] = math.radians(180)+math.radians(float(self.serial_data[2]))

@@ -63,8 +63,8 @@
     "finger1" : {
         "d1":{
             "ID":1,
-            "upperLimit":3200,
-            "lowerLimit":1980,
+            "upperLimit":3100,
+            "lowerLimit":2000,
             "mechanicalScaleFactor":0.087891,
             "zeroPoint":2789,
             "maxCurrentMilliamps":1000,
@@ -98,10 +98,10 @@
     "finger2" : {
         "d1":{
             "ID":2,
-            "upperLimit":2320,
-            "lowerLimit":1070,
+            "upperLimit":2000,
+            "lowerLimit":-1000,
             "mechanicalScaleFactor":0.087891,
-            "zeroPoint":1759,
+            "zeroPoint":511,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1

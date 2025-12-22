@@ -11,8 +11,14 @@ from std_msgs.msg import Float32MultiArray
 def distance3D(x1, y1, z1, x2, y2, z2):
     return ((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2) ** 0.5
 
-k = 0.1
+k = 1.5
+contact_current = 60.0
+max_current = 200.0
+dist_threshold = 0.04
 
+xo = 0.055
+yo = 0.0
+zo = -0.04
 
 class MultiFingerEllipticalFFB(Node):
 
@@ -70,41 +76,69 @@ class MultiFingerEllipticalFFB(Node):
                     finger['link'],
                     rclpy.time.Time()
                 )
-
+                #F1_link4 0.12610624242093774 0.0 0.09608075736578983 0.0 -0.03352964962289691
+                #F1_link4 0.11204354082015804 0.0 0.07826913089277233 0.0 -0.04473709312181075
                 x = tf.transform.translation.x
                 y = tf.transform.translation.y
                 z = tf.transform.translation.z
-                dist = distance3D(0, 0, -0.06, x, y , z)
-                if dist < 0.02:
-                    cmd[finger['motor']] = float(k/dist)
+                dist = distance3D(xo, yo, zo, x, 0 , z) #this is to test finger 2v3 fix after confiming
+                if dist < dist_threshold:
+                    cmd[finger['motor']] = contact_current+float(k/dist)
                 else:
                     cmd[finger['motor']] = 0.0
-
+            #    if (finger['link'] == 'F1_link4'):
+            #        print(finger['link'], dist, cmd[finger['motor']], x, y, z)
             except Exception as e:
                 self.get_logger().warn(f'TF failed for {finger["link"]}: {e}')
 
-        # ---------- Thumb: lookup transforms and map Y/Z to motors ----------
+                # ---------- Thumb: virtual spherical FFB ----------
         try:
             tf: TransformStamped = self.tf_buffer.lookup_transform(
                 self.base_frame,
                 self.thumb_link,
                 rclpy.time.Time()
             )
-            
+
             x = tf.transform.translation.x
             y = tf.transform.translation.y
             z = tf.transform.translation.z
-            dist = distance3D(0, 0, -0.06, x, y , z)
-            
-            if dist < 0.02:
-                cmd[self.motor_map['thumb_y']] = float(k/distance3D(0,0,-0.06,0,y,-0.06))
-                cmd[self.motor_map['thumb_z']] = float(k/distance3D(0,0,-0.06,0,0,z))
+
+            # Displacement from virtual sphere center
+            dx = x - xo
+            dy = y - yo
+            dz = z - zo
+
+            dist = (dx*dx + dy*dy + dz*dz) ** 0.5
+
+            if dist < dist_threshold and dist > 1e-6:
+                # Penetration depth (how far inside the sphere)
+                penetration = dist_threshold - dist
+
+                # Radial spring magnitude
+                effort = k * penetration / dist_threshold
+
+                # Project radial effort onto Y and Z axes
+                fy = effort * (dy / dist)
+                fz = effort * (dz / dist)
+
+                # Apply motor polarity (Y is flipped)
+                cmd[self.motor_map['thumb_y']] = -fy
+                cmd[self.motor_map['thumb_z']] =  fz
             else:
                 cmd[self.motor_map['thumb_y']] = 0.0
-                cmd[self.motor_map['thumb_z']] = 0.0 
+                cmd[self.motor_map['thumb_z']] = 0.0
+
+            # Clamp torques
+            for i in range(len(cmd)):
+                if cmd[i] > max_current:
+                    cmd[i] = max_current
+                elif cmd[i] < -max_current:
+                    cmd[i] = -max_current
 
         except Exception as e:
             self.get_logger().warn(f'TF failed for thumb ({self.thumb_link}): {e}')
+
+
         # ---------- Publish raw lookup values to FFB topic ----------
         msg = Float32MultiArray()
         msg.data = cmd
