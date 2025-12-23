@@ -13,6 +13,18 @@ from sensor_msgs.msg import JointState
 #source ~/glove/install/setup.bash
 # ros2 run robot_state_publisher robot_state_publisher --ros-args --params-file ~/glove/src/hand_description.yaml
 
+config_package_name = 'shared_config' 
+config_file_name = 'glove_settings.json'
+share_directory = get_package_share_directory(config_package_name)
+config_file_path = os.path.join(share_directory, 'config', config_file_name)
+
+try:
+    with open(config_file_path, 'r') as f:
+        dynamixelSettings = json.load(f)
+except FileNotFoundError:
+    print(f"Error: config.json not found at {config_file_path}")
+    exit()
+
 
 
 config_package_name = 'shared_config' 
@@ -27,6 +39,21 @@ except FileNotFoundError:
     print(f"Error: config.json not found at {config_file_path}")
     exit()
 
+upperLimit = [0,0,0,0]
+lowerLimit = [0,0,0,0]
+zeroPoint = [0,0,0,0]
+upperLimit[0] = dynamixelSettings["thumb"]["d1"]["upperLimit"]
+lowerLimit[0] = dynamixelSettings["thumb"]["d1"]["lowerLimit"]
+zeroPoint[0] = dynamixelSettings["thumb"]["d1"]["zeroPoint"]
+upperLimit[1] = dynamixelSettings["thumb"]["d2"]["upperLimit"]
+lowerLimit[1] = dynamixelSettings["thumb"]["d2"]["lowerLimit"]
+zeroPoint[1] = dynamixelSettings["thumb"]["d2"]["zeroPoint"]
+upperLimit[2] = dynamixelSettings["finger1"]["d1"]["upperLimit"]
+lowerLimit[2] = dynamixelSettings["finger1"]["d1"]["lowerLimit"]
+zeroPoint[2] = dynamixelSettings["finger1"]["d1"]["zeroPoint"]
+upperLimit[3] = dynamixelSettings["finger2"]["d1"]["upperLimit"]
+lowerLimit[3] = dynamixelSettings["finger2"]["d1"]["lowerLimit"]
+zeroPoint[3] = dynamixelSettings["finger2"]["d1"]["zeroPoint"]
 
 class ChainPoint:
     """Represents a point in a kinematic chain with rotation variables"""
@@ -355,10 +382,10 @@ class StateManager(Node):
             self.get_logger().info(f'Updating joint positions with serial data: {serial_data}')
             # Map dynamixel to joints (index positions confirmed)
             try:
-                msg.position[13] = math.radians(180)+math.radians(dp[0]*0.087891) #fix this conversion later, youre double radian converting and adding offsets...
-                msg.position[14] = math.radians(180)+math.radians(dp[1]*0.087891)
-                msg.position[1]  = math.radians(225)+math.radians(dp[2]*-0.087891)
-                msg.position[6]  = math.radians(45)+math.radians(dp[3]*-0.087891)
+                msg.position[13] = (dp[0]-zeroPoint[0])*0.00153398078
+                msg.position[14] = (dp[1]-zeroPoint[1])*0.00153398078
+                msg.position[1]  = (dp[2]-zeroPoint[2])*0.00153398078
+                msg.position[6]  = (dp[3]-zeroPoint[3])*0.00153398078
                 #index
                 msg.position[7] = math.radians(180)-math.radians(float(self.serial_data[1]))
                 msg.position[8] = math.radians(180)+math.radians(float(self.serial_data[2]))
