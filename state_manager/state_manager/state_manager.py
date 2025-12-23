@@ -395,6 +395,8 @@ class StateManager(Node):
                 #thumb
                 msg.position[15] = math.radians(180)-math.radians(float(self.serial_data[3]))
                 msg.position[16] = math.radians(180)+math.radians(float(self.serial_data[8]))
+                #dummy for T_joint7
+                msg.position[17] = math.radians(180)+math.radians(float(0))
 
             except IndexError as e:
                 self.get_logger().error(f'Index error updating msg.position: {e}')

@@ -4,34 +4,14 @@
   <!-- ================= WORLD ROOT ================= -->
   <link name="ffb_world"/>
 
-  <!-- ================= FINGER CONTACT PLANE ================= -->
-  <link name="finger_plane">
-    <visual>
-      <!-- Plane located at z = -0.045 -->
-      <origin xyz="0 0 -0.045" rpy="0 0 0"/>
-      <geometry>
-        <box size="0.2 0.2 0.002"/>
-      </geometry>
-      <material name="blue">
-        <color rgba="0.2 0.2 1.0 0.35"/>
-      </material>
-    </visual>
-  </link>
-
-  <joint name="finger_plane_joint" type="fixed">
-    <parent link="ffb_world"/>
-    <child link="finger_plane"/>
-    <origin xyz="0 0 0"/>
-  </joint>
-
   <!-- ================= THUMB ELLIPSE (Y–Z PLANE) ================= -->
   <link name="thumb_ellipse">
     <visual>
 
-      <origin xyz="0.055 0 -0.04" rpy="0 0 0"/>
+      <origin xyz="0.07 0 -0.08" rpy="1.5708 0 0"/>
       <geometry>
         <!-- Unit cylinder, scaled below -->
-        <sphere radius="0.04"/>
+        <cylinder radius="0.04" length="0.2"/>
       </geometry>
       <material name="red">
         <color rgba="1.0 0.2 0.2 0.35"/>

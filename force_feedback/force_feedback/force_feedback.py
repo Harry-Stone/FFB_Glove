@@ -16,9 +16,9 @@ contact_current = 60.0
 max_current = 200.0
 dist_threshold = 0.04
 
-xo = 0.055
+xo = 0.07
 yo = 0.0
-zo = -0.04
+zo = -0.08
 
 class MultiFingerEllipticalFFB(Node):
 
@@ -83,7 +83,7 @@ class MultiFingerEllipticalFFB(Node):
                 z = tf.transform.translation.z
                 dist = distance3D(xo, yo, zo, x, 0 , z) #this is to test finger 2v3 fix after confiming
                 if dist < dist_threshold:
-                    cmd[finger['motor']] = contact_current+float(k/dist)
+                    cmd[finger['motor']] = -1*(contact_current+float(k/dist))
                 else:
                     cmd[finger['motor']] = 0.0
             #    if (finger['link'] == 'F1_link4'):
