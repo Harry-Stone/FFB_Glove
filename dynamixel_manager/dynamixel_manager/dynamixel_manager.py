@@ -195,11 +195,13 @@ class DynamixelManagerNode(Node):
                 try:
                     # Get current position
                     pos = self.interface.get_motor_position(motor)
-                    
+                    self.get_logger().debug(f'Motor ID {motor.ID} position: {pos}')
                     # Apply safety limits on position
                     if pos > motor.upperLimit:
                         commands_to_apply[i]=0.0
+                        self.get_logger().warn(f'Motor ID {motor.ID} with position {pos} exceeded upper limit {motor.upperLimit}, zeroing current')
                     elif pos < motor.lowerLimit:
+                        self.get_logger().warn(f'Motor ID {motor.ID} with position {pos} exceeded lower limit {motor.lowerLimit}, zeroing current')
                         commands_to_apply[i]=0.0
                     
                     
