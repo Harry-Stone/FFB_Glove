@@ -151,8 +151,10 @@ class MultiFingerEllipticalFFB(Node):
                 fz = effort * (dz / dist)
 
                 # Apply motor polarity (Y is flipped)
-                cmd[self.motor_map['thumb_y']] = -fy
-                cmd[self.motor_map['thumb_z']] =  fz
+                #cmd[self.motor_map['thumb_y']] = -fy
+                #cmd[self.motor_map['thumb_z']] =  fz
+                cmd[self.motor_map['thumb_y']] = 0.0
+                cmd[self.motor_map['thumb_z']] = 0.0
             else:
                 cmd[self.motor_map['thumb_y']] = 0.0
                 cmd[self.motor_map['thumb_z']] = 0.0
