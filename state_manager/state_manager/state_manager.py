@@ -227,7 +227,7 @@ class StateManager(Node):
             msg.position[3] = math.radians(180) + math.radians(sd[7])
 
             # Thumb
-            msg.position[15] = math.radians(180) - math.radians(sd[3])
+            msg.position[15] = math.radians(270) - math.radians(sd[3])
             msg.position[16] = math.radians(180) + math.radians(sd[8])
 
             msg.position[17] = math.radians(180)

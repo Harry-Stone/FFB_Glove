@@ -6,14 +6,15 @@ from rclpy.node import Node
 from tf2_ros import Buffer, TransformListener
 from geometry_msgs.msg import TransformStamped
 
-from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32MultiArray, Int8
+
 
 def distance3D(x1, y1, z1, x2, y2, z2):
     return ((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2) ** 0.5
 
-k = 1.5
+k = 5500.0
 contact_current = 60.0
-max_current = 200.0
+max_current = 300.0
 dist_threshold = 0.04
 
 xo = 0.07
@@ -63,9 +64,38 @@ class MultiFingerEllipticalFFB(Node):
             10
         )
 
+        # --- Enable / Disable (Foxglove slider) ---
+        self.enabled = False  # FAIL-SAFE: start paused
+
+        self.create_subscription(
+            Int8,
+            'multi_finger_elliptical_ffb/enabled',
+            self.enable_callback,
+            10
+        )
+
+        self.get_logger().info('FFB node STARTED (paused)')
+
+
         self.get_logger().info('Bare-bones FFB node started')
 
+    def enable_callback(self, msg: Int8):
+        new_state = msg.data == 1
+        if new_state != self.enabled:
+            self.enabled = new_state
+            self.get_logger().info(
+                f"FFB node {'ENABLED' if self.enabled else 'PAUSED'}"
+            )
+
     def timer_callback(self):
+        # ---------- PAUSE GATE ----------
+        if not self.enabled:
+            zero = Float32MultiArray()
+            zero.data = [0.0, 0.0, 0.0, 0.0]
+            self.ffb_publisher.publish(zero)
+            self.get_logger().debug('FFB paused, publishing zeros')
+            return
+
         cmd = [0.0, 0.0, 0.0, 0.0]
 
         # ---------- Fingers: lookup transforms and map to motors ----------
@@ -83,11 +113,10 @@ class MultiFingerEllipticalFFB(Node):
                 z = tf.transform.translation.z
                 dist = distance3D(xo, yo, zo, x, 0 , z) #this is to test finger 2v3 fix after confiming
                 if dist < dist_threshold:
-                    cmd[finger['motor']] = -1*(contact_current+float(k/dist))
+                    cmd[finger['motor']] = -1 * (contact_current + k * abs(dist_threshold - dist))
+                    #cmd[finger['motor']] = -1*(contact_current+float(k/(abs(dist_threshold - dist))))
                 else:
                     cmd[finger['motor']] = 0.0
-            #    if (finger['link'] == 'F1_link4'):
-            #        print(finger['link'], dist, cmd[finger['motor']], x, y, z)
             except Exception as e:
                 self.get_logger().warn(f'TF failed for {finger["link"]}: {e}')
 
