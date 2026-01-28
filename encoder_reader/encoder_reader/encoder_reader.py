@@ -92,6 +92,14 @@ class EncoderReaderNode(Node):
         self.last_log_time = 0.0
         self.log_period = 5.0  # seconds
 
+    def cleanup(self):
+        if self.ser and self.ser.is_open:
+            try:
+                self.ser.close()
+                self.get_logger().info("Serial port closed")
+            except Exception as e:
+                self.get_logger().warn(f"Error closing serial port: {e}")
+
 
     def read_serial(self):
         try:
@@ -156,11 +164,16 @@ class EncoderReaderNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = EncoderReaderNode()
+
     try:
         rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info("Keyboard interrupt received, shutting down")
     finally:
+        node.cleanup()
         node.destroy_node()
         rclpy.shutdown()
+
 
 
 if __name__ == '__main__':

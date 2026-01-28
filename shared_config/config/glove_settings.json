@@ -10,7 +10,7 @@
     },
     "encoders": {
       "counts_per_rev": 4096,
-      "unit": "rad",
+      "unit": "deg",
       "offsets": [ 
         0.0, 
         0.0, 
