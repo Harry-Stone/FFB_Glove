@@ -8,6 +8,24 @@
         "port": "/dev/ttyUSB0",
         "baudrate": 115200
     },
+    "encoders": {
+      "counts_per_rev": 4096,
+      "unit": "rad",
+      "offsets": [ 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0, 
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
     "thumb" : {
         "d1":{
             "ID":11,
