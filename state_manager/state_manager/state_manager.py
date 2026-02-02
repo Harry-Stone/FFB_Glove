@@ -185,24 +185,30 @@ class StateManager(Node):
 
     def create_urdf_publisher_node(self):
         self.joint_names = [
-            'F1_joint0', 'F1_joint1', 'F1_joint2', 'F1_joint3', 'F1_joint4',
-            'F2_joint0', 'F2_joint1', 'F2_joint2', 'F2_joint3', 'F2_joint4',
-            'T_joint0', 'T_joint1', 'T_joint2', 'T_joint3',
-            'T_joint4', 'T_joint5', 'T_joint6', 'T_joint7'
+            'tl0', 'tl1', 'tl2', 'tl3', 'f1l0', 'f1l1', 'f1l2', 'f1l3', 'f2l0', 'f2l1', 'f2l2', 'f2l3'
         ]
 
         self.base_positions = [
-            0.0, -0.8086398227678077, 1.5708, 1.0967606203126732, 0.05745128772331998,
-            -0.15041057879455066, -0.7393525339285175, 1.5708, 1.0274733314733828, 0,
-            1.5708, 1.5708, -1.5708, 0.19602586540190026,
-            -0.7047088895088723, 1.5708, 1.131404264732318, 0.8
-        ]
+            math.radians(120.0),  
+            math.radians(178.0),
+            math.radians(174.0),
+            math.radians(180-126.0),
+            math.radians(158.0),
+            math.radians(163.0),
+            math.radians(173.0),
+            math.radians(-141.0),
+            math.radians(133.0),
+            math.radians(154.0),
+            math.radians(170.0),
+            math.radians(-120.0)]
+        
+
 
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
-        self.timer = self.create_timer(0.01, self.publish_joint_states)
+        self.timer = self.create_timer(0.01, self.publish_states)
 
 
-    def publish_joint_states(self):
+    def publish_states(self):
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = self.joint_names
@@ -213,24 +219,26 @@ class StateManager(Node):
             sd = self.serial_data.copy()
 
         try:
-            msg.position[13] = (dp[0] - zeroPoint[0]) * 0.00153398078
-            msg.position[14] = (dp[1] - zeroPoint[1]) * 0.00153398078
-            msg.position[1]  = (dp[2] - zeroPoint[2]) * 0.00153398078
-            msg.position[6]  = (dp[3] - zeroPoint[3]) * 0.00153398078
 
-            # Index
-            msg.position[7] = math.radians(180) - math.radians(sd[1])
-            msg.position[8] = math.radians(180) + math.radians(sd[2])
 
-            # Pointer
-            msg.position[2] = math.radians(180) - math.radians(sd[6])
-            msg.position[3] = math.radians(180) + math.radians(sd[7])
 
-            # Thumb
-            msg.position[15] = math.radians(270) - math.radians(sd[3])
-            msg.position[16] = math.radians(180) + math.radians(sd[8])
+            #Thumb
+            msg.position[0] = self.base_positions[0] - math.radians(sd[3])
+            msg.position[1] = self.base_positions[1] + math.radians(sd[2])
+            msg.position[2] = self.base_positions[2] - math.radians(sd[1])
+            msg.position[3] = self.base_positions[3] + math.radians(sd[0])
 
-            msg.position[17] = math.radians(180)
+            #F1
+            msg.position[4] = self.base_positions[4] - math.radians(sd[7])
+            msg.position[6] = self.base_positions[5] - math.radians(sd[6]) # swapped 5 and 6 fix in hardware and change here too later
+            msg.position[5] = self.base_positions[6] + math.radians(sd[5])
+            msg.position[7] = self.base_positions[7] + math.radians(sd[4])
+
+            #F2
+            msg.position[8] = self.base_positions[8] - math.radians(sd[11])
+            msg.position[9] = self.base_positions[9] - math.radians(sd[10])
+            msg.position[10] = self.base_positions[10] - math.radians(sd[9])
+            msg.position[11] = self.base_positions[11] + math.radians(sd[8])
 
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
