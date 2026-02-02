@@ -189,18 +189,18 @@ class StateManager(Node):
         ]
 
         self.base_positions = [
-            math.radians(250.0),  
-            math.radians(178.330078125),
-            math.radians(174.111328125),
-            math.radians(126.650390625),
-            math.radians(136.494140625),
-            math.radians(163.037109375),
-            math.radians(173.583984375),
-            math.radians(141.943359375),
-            math.radians(111.4453125),
-            math.radians(154.51171875),
-            math.radians(170.5078125),
-            math.radians(120.5859375)]
+            math.radians(120.0),  
+            math.radians(178.0),
+            math.radians(174.0),
+            math.radians(180-126.0),
+            math.radians(158.0),
+            math.radians(163.0),
+            math.radians(173.0),
+            math.radians(-141.0),
+            math.radians(133.0),
+            math.radians(154.0),
+            math.radians(170.0),
+            math.radians(-120.0)]
         
 
 
@@ -224,21 +224,21 @@ class StateManager(Node):
 
             #Thumb
             msg.position[0] = self.base_positions[0] - math.radians(sd[3])
-            msg.position[1] = self.base_positions[1] - math.radians(sd[2])
+            msg.position[1] = self.base_positions[1] + math.radians(sd[2])
             msg.position[2] = self.base_positions[2] - math.radians(sd[1])
-            msg.position[3] = self.base_positions[3] - math.radians(sd[0])
+            msg.position[3] = self.base_positions[3] + math.radians(sd[0])
 
             #F1
             msg.position[4] = self.base_positions[4] - math.radians(sd[7])
-            msg.position[5] = self.base_positions[5] - math.radians(sd[6])
-            msg.position[6] = self.base_positions[6] - math.radians(sd[5])
-            msg.position[7] = self.base_positions[7] - math.radians(sd[4])
+            msg.position[6] = self.base_positions[5] - math.radians(sd[6]) # swapped 5 and 6 fix in hardware and change here too later
+            msg.position[5] = self.base_positions[6] + math.radians(sd[5])
+            msg.position[7] = self.base_positions[7] + math.radians(sd[4])
 
             #F2
             msg.position[8] = self.base_positions[8] - math.radians(sd[11])
             msg.position[9] = self.base_positions[9] - math.radians(sd[10])
             msg.position[10] = self.base_positions[10] - math.radians(sd[9])
-            msg.position[11] = self.base_positions[11] - math.radians(sd[8])
+            msg.position[11] = self.base_positions[11] + math.radians(sd[8])
 
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
