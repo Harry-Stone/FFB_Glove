@@ -1,6 +1,6 @@
 {
     "U2D2": {
-        "port": "/dev/ttyUSB0",
+        "port": "/dev/ttyUSB1",
         "baudrate": 1000000,
         "protocolVersion": 2
     },

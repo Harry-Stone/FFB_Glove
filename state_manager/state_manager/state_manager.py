@@ -48,25 +48,21 @@ except FileNotFoundError:
     exit()
 
 
-upperLimit = [0, 0, 0, 0]
-lowerLimit = [0, 0, 0, 0]
-zeroPoint  = [0, 0, 0, 0]
+upperLimit = [0, 0, 0]
+lowerLimit = [0, 0, 0]
+zeroPoint  = [0, 0, 0]
 
 upperLimit[0] = dynamixelSettings["thumb"]["d1"]["upperLimit"]
 lowerLimit[0] = dynamixelSettings["thumb"]["d1"]["lowerLimit"]
 zeroPoint[0]  = dynamixelSettings["thumb"]["d1"]["zeroPoint"]
 
-upperLimit[1] = dynamixelSettings["thumb"]["d2"]["upperLimit"]
-lowerLimit[1] = dynamixelSettings["thumb"]["d2"]["lowerLimit"]
-zeroPoint[1]  = dynamixelSettings["thumb"]["d2"]["zeroPoint"]
+upperLimit[1] = dynamixelSettings["finger1"]["d1"]["upperLimit"]
+lowerLimit[1] = dynamixelSettings["finger1"]["d1"]["lowerLimit"]
+zeroPoint[1]  = dynamixelSettings["finger1"]["d1"]["zeroPoint"]
 
-upperLimit[2] = dynamixelSettings["finger1"]["d1"]["upperLimit"]
-lowerLimit[2] = dynamixelSettings["finger1"]["d1"]["lowerLimit"]
-zeroPoint[2]  = dynamixelSettings["finger1"]["d1"]["zeroPoint"]
-
-upperLimit[3] = dynamixelSettings["finger2"]["d1"]["upperLimit"]
-lowerLimit[3] = dynamixelSettings["finger2"]["d1"]["lowerLimit"]
-zeroPoint[3]  = dynamixelSettings["finger2"]["d1"]["zeroPoint"]
+upperLimit[2] = dynamixelSettings["finger2"]["d1"]["upperLimit"]
+lowerLimit[2] = dynamixelSettings["finger2"]["d1"]["lowerLimit"]
+zeroPoint[2]  = dynamixelSettings["finger2"]["d1"]["zeroPoint"]
 
 
 # =========================
@@ -83,7 +79,7 @@ class StateManager(Node):
         self.serial_data = [180.0] * 10
 
         # Dynamixel joint positions
-        self.dynamixel_positions = [0.0, 0.0, 0.0, 0.0]
+        self.dynamixel_positions = [0.0, 0.0, 0.0]
 
         # IMU orientation (roll, pitch, yaw) in radians
         self.imu_rpy = [0.0, 0.0, 0.0]
@@ -132,7 +128,7 @@ class StateManager(Node):
     def dynamixel_pos_callback(self, msg):
         try:
             raw = list(msg.data)
-            if len(raw) != 4:
+            if len(raw) != 3:
                 return
             with self.lock:
                 self.dynamixel_positions = [float(v) for v in raw]
@@ -202,8 +198,6 @@ class StateManager(Node):
             math.radians(170.0),
             math.radians(-120.0)]
         
-
-
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
         self.timer = self.create_timer(0.01, self.publish_states)
 
@@ -215,13 +209,9 @@ class StateManager(Node):
         msg.position = [float(v) for v in self.base_positions]
 
         with self.lock:
-            dp = self.dynamixel_positions.copy()
             sd = self.serial_data.copy()
 
         try:
-
-
-
             #Thumb
             msg.position[0] = self.base_positions[0] - math.radians(sd[3])
             msg.position[1] = self.base_positions[1] + math.radians(sd[2])

@@ -77,7 +77,7 @@ except Exception as e:
     print(f"Unexpected error while initializing Dynamixel instances: {e}")
 
 class DynamixelInterface:
-    def __init__(self, port='/dev/ttyUSB0', baudrate=1000000, protocolVersion=2.0):
+    def __init__(self, port='/dev/ttyUSB1', baudrate=1000000, protocolVersion=2.0):
         self.port = port
         self.baudrate = baudrate
         self.protocolVersion = protocolVersion
@@ -136,7 +136,7 @@ class DynamixelManagerNode(Node):
         # Thread safety and timeout handling
         self.lock = Lock()
         self.last_command_time = time.time()
-        self.current_commands = [0.0, 0.0, 0.0, 0.0]  # Current for each motor
+        self.current_commands = [0.0, 0.0, 0.0]  # Current for each motor
         self.timeout_threshold = 1.0  # seconds
         
         # Create a timer for the main control loop
