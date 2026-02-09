@@ -64,11 +64,6 @@ try:
         print("Error: thumb->d1 not found or missing fields in config.json")
         T1 = None
     try:
-        T2 = _dynamixel_from_dict(dynamixelSettings["thumb"]["d2"])
-    except KeyError:
-        print("Error: thumb->d2 not found or missing fields in config.json")
-        T2 = None
-    try:
         F1 = _dynamixel_from_dict(dynamixelSettings["finger1"]["d1"])
     except KeyError:
         print("Error: finger1->d1 not found or missing fields in config.json")
@@ -82,7 +77,7 @@ except Exception as e:
     print(f"Unexpected error while initializing Dynamixel instances: {e}")
 
 class DynamixelInterface:
-    def __init__(self, port='/dev/ttyUSB0', baudrate=57600, protocolVersion=2.0):
+    def __init__(self, port='/dev/ttyUSB1', baudrate=1000000, protocolVersion=2.0):
         self.port = port
         self.baudrate = baudrate
         self.protocolVersion = protocolVersion
@@ -127,7 +122,7 @@ class DynamixelManagerNode(Node):
         )
         
         # Setup motors
-        for motor in [T1, T2, F1, F2]:
+        for motor in [T1, F1, F2]:
             if motor is not None:
                 self.interface.setup_motor(motor)
         
@@ -136,12 +131,12 @@ class DynamixelManagerNode(Node):
         self.ffb_subscription = self.create_subscription(Float32MultiArray, 'FFB', self.ffb_callback, 10)
         
         # Motor list for easier iteration
-        self.motors = [T1, T2, F1, F2]
+        self.motors = [T1, F1, F2]
         
         # Thread safety and timeout handling
         self.lock = Lock()
         self.last_command_time = time.time()
-        self.current_commands = [0.0, 0.0, 0.0, 0.0]  # Current for each motor
+        self.current_commands = [0.0, 0.0, 0.0]  # Current for each motor
         self.timeout_threshold = 1.0  # seconds
         
         # Create a timer for the main control loop
@@ -172,18 +167,18 @@ class DynamixelManagerNode(Node):
     def ffb_callback(self, msg):
         """Handle incoming force feedback (current) commands"""
         with self.lock:
-            if len(msg.data) >= 4:
-                self.current_commands = list(msg.data[:4])
+            if len(msg.data) >= 3:
+                self.current_commands = list(msg.data[:3])
                 self.last_command_time = time.time()
             else:
-                self.get_logger().warn(f'FFB message has {len(msg.data)} values, expected 4')
+                self.get_logger().warn(f'FFB message has {len(msg.data)} values, expected 3')
     
     def control_loop(self):
         """Main control loop: read positions, apply currents, publish data"""
         with self.lock:
             # Check for timeout - if no command received for 1 second, zero out currents
             elapsed = time.time() - self.last_command_time
-            commands_to_apply = self.current_commands if elapsed < self.timeout_threshold else [0.0, 0.0, 0.0, 0.0]
+            commands_to_apply = self.current_commands if elapsed < self.timeout_threshold else [0.0, 0.0, 0.0]
             
             if elapsed >= self.timeout_threshold:
                 self.get_logger().warn(f'Timeout detected (no FFB for {elapsed:.2f}s), disabling motors')

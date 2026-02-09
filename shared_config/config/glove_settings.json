@@ -1,7 +1,7 @@
 {
     "U2D2": {
         "port": "/dev/ttyUSB1",
-        "baudrate": 57600,
+        "baudrate": 1000000,
         "protocolVersion": 2
     },
     "encoder_serial": {
@@ -28,21 +28,11 @@
     },
     "thumb" : {
         "d1":{
-            "ID":11,
-            "upperLimit":2780,
-            "lowerLimit":1960,
+            "ID":0,
+            "upperLimit":8103,
+            "lowerLimit":6700,
             "mechanicalScaleFactor":0.087891,
-            "zeroPoint":2032,
-            "maxCurrentMilliamps":1000,
-            "minCurrentMilliamps":100,
-            "forceScaleFactor":1
-        },
-        "d2":{
-            "ID":12,
-            "upperLimit":2313,
-            "lowerLimit":1400,
-            "mechanicalScaleFactor":0.087891,
-            "zeroPoint":2057,
+            "zeroPoint":7103,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
@@ -81,10 +71,10 @@
     "finger1" : {
         "d1":{
             "ID":1,
-            "upperLimit":1260,
-            "lowerLimit":236,
+            "upperLimit":5687,
+            "lowerLimit":3687,
             "mechanicalScaleFactor":0.087891,
-            "zeroPoint":527,
+            "zeroPoint":4687,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1
@@ -116,10 +106,10 @@
     "finger2" : {
         "d1":{
             "ID":2,
-            "upperLimit":5161,
-            "lowerLimit":3904,
+            "upperLimit":8165,
+            "lowerLimit":6165,
             "mechanicalScaleFactor":0.087891,
-            "zeroPoint":4347,
+            "zeroPoint":7165,
             "maxCurrentMilliamps":1000,
             "minCurrentMilliamps":100,
             "forceScaleFactor":1

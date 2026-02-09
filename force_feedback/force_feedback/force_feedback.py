@@ -8,25 +8,11 @@ from geometry_msgs.msg import TransformStamped
 
 from std_msgs.msg import Float32MultiArray, Int8
 
-
-def distance3D(x1, y1, z1, x2, y2, z2):
-    return ((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2) ** 0.5
-
-k = 5500.0
-contact_current = 60.0
-max_current = 300.0
-dist_threshold = 0.04
-
-xo = 0.07
-yo = 0.0
-zo = -0.08
-
 class MultiFingerEllipticalFFB(Node):
 
     def __init__(self):
         super().__init__('multi_finger_elliptical_ffb')
 
-        # --- TF ---
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
@@ -37,26 +23,6 @@ class MultiFingerEllipticalFFB(Node):
             self.timer_callback
         )
 
-        # --- Frames ---
-        self.base_frame = 'F1_base'
-
-        # --- Motors (4 total) ---
-        self.motor_map = {
-            'thumb_z': 0,   # logical ID 11
-            'thumb_y': 1,   # logical ID 12
-            'finger_1': 2,
-            'finger_2': 3,
-        }
-
-        # --- Finger links ---
-        self.fingers = [
-            {'link': 'F1_link4', 'motor': self.motor_map['finger_1']},
-            {'link': 'F2_link4', 'motor': self.motor_map['finger_2']},
-        ]
-
-        # --- Thumb ---
-        self.thumb_link = 'T_link7'
-
         # --- Publisher ---
         self.ffb_publisher = self.create_publisher(
             Float32MultiArray,
@@ -64,8 +30,8 @@ class MultiFingerEllipticalFFB(Node):
             10
         )
 
-        # --- Enable / Disable (Foxglove slider) ---
-        self.enabled = False  # FAIL-SAFE: start paused
+        # Enable / Disable
+        self.enabled = False
 
         self.create_subscription(
             Int8,
@@ -74,10 +40,14 @@ class MultiFingerEllipticalFFB(Node):
             10
         )
 
+        # End-effector frames (order == actuator order)
+        self.endpoint_frames = [
+            'tl3',   # thumb
+            'f1l3',   # finger1
+            'f2l3'    # finger2
+        ]
+
         self.get_logger().info('FFB node STARTED (paused)')
-
-
-        self.get_logger().info('Bare-bones FFB node started')
 
     def enable_callback(self, msg: Int8):
         new_state = msg.data == 1
@@ -91,90 +61,45 @@ class MultiFingerEllipticalFFB(Node):
         # ---------- PAUSE GATE ----------
         if not self.enabled:
             zero = Float32MultiArray()
-            zero.data = [0.0, 0.0, 0.0, 0.0]
+            zero.data = [0.0] * len(self.endpoint_frames)
             self.ffb_publisher.publish(zero)
-            self.get_logger().debug('FFB paused, publishing zeros')
             return
 
-        cmd = [0.0, 0.0, 0.0, 0.0]
-
-        # ---------- Fingers: lookup transforms and map to motors ----------
-        for finger in self.fingers:
-            try:
+        # ---------- Get Transforms ----------
+        transforms = []
+        try:
+            for frame in self.endpoint_frames:
                 tf: TransformStamped = self.tf_buffer.lookup_transform(
-                    self.base_frame,
-                    finger['link'],
+                    'base',
+                    frame,
                     rclpy.time.Time()
                 )
-                #F1_link4 0.12610624242093774 0.0 0.09608075736578983 0.0 -0.03352964962289691
-                #F1_link4 0.11204354082015804 0.0 0.07826913089277233 0.0 -0.04473709312181075
-                x = tf.transform.translation.x
-                y = tf.transform.translation.y
-                z = tf.transform.translation.z
-                dist = distance3D(xo, yo, zo, x, 0 , z) #this is to test finger 2v3 fix after confiming
-                if dist < dist_threshold:
-                    cmd[finger['motor']] = -1 * (contact_current + k * abs(dist_threshold - dist))
-                    #cmd[finger['motor']] = -1*(contact_current+float(k/(abs(dist_threshold - dist))))
-                else:
-                    cmd[finger['motor']] = 0.0
-            except Exception as e:
-                self.get_logger().warn(f'TF failed for {finger["link"]}: {e}')
+                transforms.append(tf)
+        except Exception as e:
+            self.get_logger().warn(f"TF lookup failed: {e}")
+            return
+        
+        cmd = []
 
-                # ---------- Thumb: virtual spherical FFB ----------
-        try:
-            tf: TransformStamped = self.tf_buffer.lookup_transform(
-                self.base_frame,
-                self.thumb_link,
-                rclpy.time.Time()
-            )
-
+        # ---------- Compute FFB Commands ----------
+        for tf in transforms:
             x = tf.transform.translation.x
             y = tf.transform.translation.y
             z = tf.transform.translation.z
 
-            # Displacement from virtual sphere center
-            dx = x - xo
-            dy = y - yo
-            dz = z - zo
-
-            dist = (dx*dx + dy*dy + dz*dz) ** 0.5
-
-            if dist < dist_threshold and dist > 1e-6:
-                # Penetration depth (how far inside the sphere)
-                penetration = dist_threshold - dist
-
-                # Radial spring magnitude
-                effort = k * penetration / dist_threshold
-
-                # Project radial effort onto Y and Z axes
-                fy = effort * (dy / dist)
-                fz = effort * (dz / dist)
-
-                # Apply motor polarity (Y is flipped)
-                #cmd[self.motor_map['thumb_y']] = -fy
-                #cmd[self.motor_map['thumb_z']] =  fz
-                cmd[self.motor_map['thumb_y']] = 0.0
-                cmd[self.motor_map['thumb_z']] = 0.0
+            if z < 0.0:
+                cmd.append(100)
             else:
-                cmd[self.motor_map['thumb_y']] = 0.0
-                cmd[self.motor_map['thumb_z']] = 0.0
+                cmd.append(0)
+        
+        cmd[0] *= -2.0  # Thumb scaling
+        cmd[1] *= 2.0  # Finger1 scaling
+        cmd[2] *= -2.0  # Finger2 scaling            
 
-            # Clamp torques
-            for i in range(len(cmd)):
-                if cmd[i] > max_current:
-                    cmd[i] = max_current
-                elif cmd[i] < -max_current:
-                    cmd[i] = -max_current
-
-        except Exception as e:
-            self.get_logger().warn(f'TF failed for thumb ({self.thumb_link}): {e}')
-
-
-        # ---------- Publish raw lookup values to FFB topic ----------
+        # ---------- Publish ----------
         msg = Float32MultiArray()
         msg.data = cmd
         self.ffb_publisher.publish(msg)
-
 
 def main(args=None):
     rclpy.init(args=args)
