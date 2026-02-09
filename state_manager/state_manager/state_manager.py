@@ -185,18 +185,18 @@ class StateManager(Node):
         ]
 
         self.base_positions = [
-            math.radians(120.0),  
-            math.radians(178.0),
+            math.radians(177.0),  
+            math.radians(188.0),
             math.radians(174.0),
-            math.radians(180-126.0),
-            math.radians(158.0),
-            math.radians(163.0),
-            math.radians(173.0),
-            math.radians(-141.0),
+            math.radians(177.0),
+            math.radians(165.0),
+            math.radians(202.0),
+            math.radians(180.0),
+            math.radians(182.0),
             math.radians(133.0),
-            math.radians(154.0),
+            math.radians(159.0),
             math.radians(170.0),
-            math.radians(-120.0)]
+            math.radians(182.0)]
         
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
         self.timer = self.create_timer(0.01, self.publish_states)
@@ -220,8 +220,8 @@ class StateManager(Node):
 
             #F1
             msg.position[4] = self.base_positions[4] - math.radians(sd[7])
-            msg.position[6] = self.base_positions[5] - math.radians(sd[6]) # swapped 5 and 6 fix in hardware and change here too later
-            msg.position[5] = self.base_positions[6] + math.radians(sd[5])
+            msg.position[5] = self.base_positions[5] + math.radians(sd[6])
+            msg.position[6] = self.base_positions[6] - math.radians(sd[5])
             msg.position[7] = self.base_positions[7] + math.radians(sd[4])
 
             #F2
