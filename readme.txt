@@ -16,4 +16,5 @@ The haply node uses:
 https://docs.haply.co/inverseSDK/service/
 systemctl start haply-inverse-service.service
 
-
+I have a tendency to forget this...
+ros2 run robot_state_publisher robot_state_publisher   --ros-args --params-file /home/harry/glove/src/hand_description.yaml
