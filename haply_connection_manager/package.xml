@@ -1,25 +1,22 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>haply_connection_manager</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="harrystone3301@gmail.com">Harry Stone</maintainer>
-  <license>TODO: License declaration</license>
+  <description>Haply websocket bridge</description>
 
+  <maintainer email="harrystone3301@gmail.com">Harry Stone</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- ROS deps -->
   <depend>rclpy</depend>
   <depend>std_msgs</depend>
-  <exec_depend>python3</exec_depend>
-  <exec_depend>python3-venv</exec_depend>
+
+  <!-- System Python deps -->
   <exec_depend>python3-websockets</exec_depend>
-  <exec_depend>python3-pip</exec_depend>
 
-
-  <test_depend>ament_copyright</test_depend>
+  <!-- Tests -->
   <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_mypy</test_depend>
   <test_depend>ament_pep257</test_depend>
-  <test_depend>ament_xmllint</test_depend>
   <test_depend>python3-pytest</test_depend>
 
   <export>

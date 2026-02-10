@@ -6,7 +6,6 @@ import os
 from ament_index_python.packages import get_package_share_directory
 import asyncio
 import websockets
-import orjson
 from rclpy.executors import MultiThreadedExecutor
 from threading import Thread
 import time
@@ -25,11 +24,6 @@ except FileNotFoundError:
 
 class HaplyConnectionManager(Node):
     def __init__(self):
-        
-        posmsg = Float32MultiArray()
-        posmsg.data = [0.0, 0.0, 0.0]
-        self.pos_msg = posmsg
-
         super().__init__('haply_connection_manager')
         logger = self.get_logger()
         logger.info("Haply Connection Manager initialized")
@@ -81,7 +75,6 @@ class HaplyConnectionManager(Node):
         logger = self.get_logger()
         logger.info(
             f"Inverse3 ID: {self.inverse3_device_id}, "
-            f"Current Position X:{self.pos_msg.data[0]}; Y:{self.pos_msg.data[1]}; Z:{self.pos_msg.data[2]}; ,"
             f"Current Force: {self.current_force}"
         )
     
@@ -142,7 +135,7 @@ class HaplyConnectionManager(Node):
                     try:
                         # Receive data from the device
                         response = await ws.recv()
-                        data = orjson.loads(response)
+                        data = json.loads(response)
                         
                         # Get devices list from the data
                         inverse3_devices = data.get("inverse3", [])
@@ -197,7 +190,7 @@ class HaplyConnectionManager(Node):
                             ]
                         }
                         
-                        await ws.send(orjson.dumps(request_msg))
+                        await ws.send(json.dumps(request_msg))
                         
                     except asyncio.TimeoutError:
                         logger.warn("WebSocket receive timeout")
