@@ -88,13 +88,16 @@ class MultiFingerEllipticalFFB(Node):
             z = tf.transform.translation.z
 
             if z < 0.0:
-                cmd.append(100)
+                cmd.append(-2*z)
             else:
                 cmd.append(0)
+            
+            #clamp to [-100, 200]
+            cmd[-1] = max(-100.0, min(200.0, cmd[-1]))
         
-        cmd[0] *= -2.0  # Thumb scaling
-        cmd[1] *= 2.0  # Finger1 scaling
-        cmd[2] *= -2.0  # Finger2 scaling            
+        cmd[0] *= -1.0  # Thumb scaling
+        cmd[1] *= 1.0  # Finger1 scaling
+        cmd[2] *= -1.0  # Finger2 scaling            
 
         # ---------- Publish ----------
         msg = Float32MultiArray()

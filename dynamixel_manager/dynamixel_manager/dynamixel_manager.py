@@ -140,7 +140,7 @@ class DynamixelManagerNode(Node):
         self.timeout_threshold = 1.0  # seconds
         
         # Create a timer for the main control loop
-        self.timer = self.create_timer(0.01, self.control_loop)  # 100 Hz
+        self.timer = self.create_timer(0.005, self.control_loop)  # 100 Hz
         
         self.get_logger().info('Dynamixel Manager Node initialized')
     
