@@ -9,3 +9,12 @@ https://drive.google.com/file/d/1w8HkZ7gCtW_Y7MOri8pdyC3q7gXZgteO/view?usp=shari
 unzip it and leave it in the src folder, it also includes the STLs used to print the mechanical parts,
 So i guess you could print it that way, but I do intend to do full mechanical doccumentation
 as well as upload the microcontroller code for the encoder reader.
+
+This was developed on ROS kilted, but also works on humble
+
+The haply node uses:
+https://docs.haply.co/inverseSDK/service/
+systemctl start haply-inverse-service.service
+
+I have a tendency to forget this...
+ros2 run robot_state_publisher robot_state_publisher   --ros-args --params-file /home/harry/glove/src/hand_description.yaml

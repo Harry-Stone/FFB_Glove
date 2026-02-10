@@ -76,13 +76,15 @@ class StateManager(Node):
         self.lock = Lock()
 
         # Serial finger bend data
-        self.serial_data = [180.0] * 10
+        self.serial_data = [180.0] * 12
 
         # Dynamixel joint positions
         self.dynamixel_positions = [0.0, 0.0, 0.0]
 
         # IMU orientation (roll, pitch, yaw) in radians
         self.imu_rpy = [0.0, 0.0, 0.0]
+
+        self.haply_position = [0.0, 0.0, 0.0]
 
         # =====================
         # Subscriptions
@@ -109,21 +111,28 @@ class StateManager(Node):
             10
         )
 
-        # =====================
-        # TF Broadcaster
-        # =====================
+        self.haply_pos_sub = self.create_subscription(
+            Float32MultiArray,
+            'haply_position',
+            self.haply_position_callback,
+            10
+        )
 
         self.tf_broadcaster = TransformBroadcaster(self)
-
         self.get_logger().info("StateManager initialized")
-
-
-    # =====================
-    # Callbacks
-    # =====================
 
     def serial_data_callback(self, msg):
         self.serial_data = list(msg.data)
+
+    def haply_position_callback(self, msg):
+        try:
+            raw = list(msg.data)
+            if len(raw) != 3:
+                return
+            with self.lock:
+                self.haply_position = [float(v) for v in raw]
+        except Exception as e:
+            self.get_logger().warn(f"Haply position data error: {e}")
 
     def dynamixel_pos_callback(self, msg):
         try:
@@ -141,8 +150,6 @@ class StateManager(Node):
 
         # roll, pitch, yaw already in radians
         self.imu_rpy = [float(v) for v in msg.data]
-        self.publish_base_tf()
-
 
     # =====================
     # TF publishing
@@ -150,21 +157,18 @@ class StateManager(Node):
 
     def publish_base_tf(self):
         roll, pitch, yaw = self.imu_rpy
-
-        # Adjust axes here if needed
-        # roll  = -roll
-        # yaw   = -yaw
+        base_position = self.haply_position
 
         t = TransformStamped()
         t.header.stamp = self.get_clock().now().to_msg()
         t.header.frame_id = 'world'
-        t.child_frame_id  = 'F1_base'
+        t.child_frame_id  = 'base'
 
+        t.transform.translation.x = 1000 * base_position[0]
+        t.transform.translation.y = 1000 * base_position[1]
+        t.transform.translation.z = 1000 * base_position[2]
 
-
-        t.transform.translation.x = 0.0
-        t.transform.translation.y = 0.0
-        t.transform.translation.z = 0.0
+        self.get_logger().debug(f"Publishing TF - Position: {base_position}, RPY: {self.imu_rpy}")
 
         q = quaternion_from_euler(roll, pitch, yaw)
         t.transform.rotation.x = q[0]
@@ -232,6 +236,11 @@ class StateManager(Node):
 
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
+
+        try:
+            self.publish_base_tf()
+        except Exception as e:
+            self.get_logger().warn(f"TF publish error: {e}")
 
         self.pub.publish(msg)
 
