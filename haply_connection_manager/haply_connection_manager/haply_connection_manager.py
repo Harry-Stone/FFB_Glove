@@ -25,6 +25,11 @@ except FileNotFoundError:
 
 class HaplyConnectionManager(Node):
     def __init__(self):
+        
+        posmsg = Float32MultiArray()
+        posmsg.data = [0.0, 0.0, 0.0]
+        self.pos_msg = posmsg
+
         super().__init__('haply_connection_manager')
         logger = self.get_logger()
         logger.info("Haply Connection Manager initialized")
@@ -76,8 +81,7 @@ class HaplyConnectionManager(Node):
         logger = self.get_logger()
         logger.info(
             f"Inverse3 ID: {self.inverse3_device_id}, "
-            f"Verse Grip ID: {self.verse_grip_device_id}, "
-            f"Handedness: {self.handedness}, "
+            f"Current Position X:{self.pos_msg.data[0]}; Y:{self.pos_msg.data[1]}; Z:{self.pos_msg.data[2]}; ,"
             f"Current Force: {self.current_force}"
         )
     
