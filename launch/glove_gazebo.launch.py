@@ -50,8 +50,25 @@ def generate_launch_description():
             arguments=[
                 '-topic', 'robot_description',
                 '-name', 'glove',
-                '-world', 'shapes'
+                '-world', 'shapes',
+                '-x', '0', '-y', '0', '-z', '1.5'
             ],
             output='screen'
+        ),
+        
+        Node(
+            package='state_manager',
+            executable='state_manager',
+        ),
+
+        Node(
+            package='gazebo_bridge',
+            executable='gazebo_bridge',
+        ),
+
+        Node(
+            package='encoder_reader',
+            executable='encoder_reader',
         )
+
     ])
