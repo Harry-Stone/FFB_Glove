@@ -185,7 +185,7 @@ class StateManager(Node):
 
     def create_urdf_publisher_node(self):
         self.joint_names = [
-            'tl0', 'tl1', 'tl2', 'tl3', 'f1l0', 'f1l1', 'f1l2', 'f1l3', 'f2l0', 'f2l1', 'f2l2', 'f2l3'
+            'tl0_joint', 'tl1_joint', 'tl2_joint', 'tl3_joint', 'f1l0_joint', 'f1l1_joint', 'f1l2_joint', 'f1l3_joint', 'f2l0_joint', 'f2l1_joint', 'f2l2_joint', 'f2l3_joint'
         ]
 
         self.base_positions = [
