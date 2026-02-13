@@ -14,6 +14,8 @@
   <test_depend>ament_xmllint</test_depend>
   <test_depend>python3-pytest</test_depend>
 
+  <exec_depend>ros_gz_py</exec_depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>
