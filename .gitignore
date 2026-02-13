@@ -2,3 +2,4 @@
 meshes
 images
 glove_bringup/launch/glove_system.launch.yaml
+*.pyc
