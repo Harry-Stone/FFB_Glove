@@ -22,11 +22,13 @@ def generate_launch_description():
 
     return LaunchDescription([
 
-        # Robot State Publisher
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
-            parameters=[{'robot_description': robot_description}]
+            parameters=[
+                {'robot_description': robot_description},
+                {'use_sim_time': True}
+            ]
         ),
 
         SetEnvironmentVariable(
@@ -63,7 +65,16 @@ def generate_launch_description():
             ],
             output='screen'
         ),
-        
+
+        Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            arguments=[
+                '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
+            ],
+            output='screen'
+        ),
+
         Node(
             package='state_manager',
             executable='state_manager',
