@@ -1,0 +1,35 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    glove_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_state_broadcaster:
+  ros__parameters: {}
+
+glove_controller:
+  ros__parameters:
+    joints:
+      - tl0_joint
+      - tl1_joint
+      - tl2_joint
+      - tl3_joint
+      - f1l0_joint
+      - f1l1_joint
+      - f1l2_joint
+      - f1l3_joint
+      - f2l0_joint
+      - f2l1_joint
+      - f2l2_joint
+      - f2l3_joint
+
+    command_interfaces:
+      - position
+
+    state_interfaces:
+      - position
+      - velocity

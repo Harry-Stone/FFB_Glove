@@ -1,7 +1,7 @@
 from launch import LaunchDescription
 from launch.actions import ExecuteProcess, SetEnvironmentVariable
 from launch_ros.actions import Node
-from launch.substitutions import Command, PathJoinSubstitution
+from launch.substitutions import Command, PathJoinSubstitution, EnvironmentVariable
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -37,6 +37,14 @@ def generate_launch_description():
             ])
         ),
 
+        SetEnvironmentVariable(
+            name='GZ_SIM_SYSTEM_PLUGIN_PATH',
+            value=[
+                EnvironmentVariable('GZ_SIM_SYSTEM_PLUGIN_PATH', default_value=''),
+                ':/opt/ros/kilted/lib'
+            ]
+        ),
+
         # Start Gazebo
         ExecuteProcess(
             cmd=['gz', 'sim', '-r', 'shapes.sdf'],
@@ -59,11 +67,6 @@ def generate_launch_description():
         Node(
             package='state_manager',
             executable='state_manager',
-        ),
-
-        Node(
-            package='gazebo_bridge',
-            executable='gazebo_bridge',
         ),
 
         Node(
