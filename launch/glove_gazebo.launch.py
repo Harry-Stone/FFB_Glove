@@ -88,12 +88,8 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # -----------------------
-        # Start Gazebo (empty world)
-        # -----------------------
-
         ExecuteProcess(
-            cmd=['gz', 'sim', '-r', 'shapes.sdf'],
+            cmd=['gz', 'sim', '-r', '/home/harry/glove/src/glove_description/shapes.sdf'],
             output='screen'
         ),
 

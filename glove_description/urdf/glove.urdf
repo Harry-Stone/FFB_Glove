@@ -114,15 +114,31 @@
       </geometry>
       <material name="Material_003" />
     </visual>
-    <collision>
+    <collision name="tl3_collision">
       <origin xyz="0.11426994 -0.14165771 6.521e-05" rpy="0 0 0" />
       <geometry>
         <box size="0.3627364 0.39274078 0.28458366" />
       </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
     </collision>
     <inertial>
-      <mass value="0.1" />
-      <inertia ixx="1.96027654e-04" ixy="0" ixz="0" iyy="1.77137963e-04" iyz="0" izz="2.38185847e-04" />
+      <mass value="1.0" />
+      <inertia ixx="1.96027654e-03" ixy="0" ixz="0" iyy="1.77137963e-03" iyz="0" izz="2.38185847e-03" />
     </inertial>
   </link>
   <link name="bridge">
@@ -222,15 +238,31 @@
       </geometry>
       <material name="Material_003" />
     </visual>
-    <collision>
+    <collision name="f1l3_collision">
       <origin xyz="0.00294435 -0.1475145 0.06922911" rpy="0 0 0" />
       <geometry>
         <box size="0.25454088 0.39777729 0.30544603" />
       </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
     </collision>
     <inertial>
-      <mass value="0.1" />
-      <inertia ixx="2.09603377e-04" ixy="0" ixz="0" iyy="1.31740283e-04" iyz="0" izz="1.85848194e-04" />
+      <mass value="1.0" />
+      <inertia ixx="2.09603377e-03" ixy="0" ixz="0" iyy="1.31740283e-03" iyz="0" izz="1.85848194e-03" />
     </inertial>
   </link>
   <link name="f2l0">
@@ -312,15 +344,31 @@
       </geometry>
       <material name="Material_003" />
     </visual>
-    <collision>
+    <collision name="f2l3_collision">
       <origin xyz="0.00294447 -0.14558609 0.07319756" rpy="0 0 0" />
       <geometry>
         <box size="0.25454054 0.39008659 0.29511078" />
       </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
     </collision>
     <inertial>
-      <mass value="0.1" />
-      <inertia ixx="1.99381602e-04" ixy="0" ixz="0" iyy="1.26567715e-04" iyz="0" izz="1.80798697e-04" />
+      <mass value="1.0" />
+      <inertia ixx="1.99381602e-03" ixy="0" ixz="0" iyy="1.26567715e-03" iyz="0" izz="1.80798697e-03" />
     </inertial>
   </link>
   
@@ -458,6 +506,38 @@
   <gazebo reference="f2l3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
   <gazebo reference="f2xc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
   <gazebo reference="bridge"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+
+  <!-- create contact sensors for fingertips-->
+  <gazebo reference="f1l3">
+    <sensor name="f1l3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>f1l3_collision_collision</collision>
+      </contact>
+      <topic>/contact/f1l3</topic>
+    </sensor>
+  </gazebo>
+  <gazebo reference="f2l3">
+    <sensor name="f2l3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>f2l3_collision_collision</collision>
+      </contact>
+      <topic>/contact/f2l3</topic>
+    </sensor>
+  </gazebo>
+  <gazebo reference="tl3">
+    <sensor name="tl3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>tl3_collision_collision</collision>
+      </contact>
+      <topic>/contact/tl3</topic>
+    </sensor>
+  </gazebo>
   
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
@@ -546,7 +626,5 @@
       <parameters>/home/harry/glove/src/glove_description/config/controllers.yaml</parameters>
     </plugin>
   </gazebo>
-
-
   
 </robot>
