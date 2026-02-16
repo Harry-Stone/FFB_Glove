@@ -9,6 +9,7 @@ import numpy as np
 import math
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import TransformStamped
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from tf2_ros import TransformBroadcaster
 
 def quaternion_from_euler(roll, pitch, yaw):
@@ -72,6 +73,23 @@ zeroPoint[2]  = dynamixelSettings["finger2"]["d1"]["zeroPoint"]
 class StateManager(Node):
     def __init__(self):
         super().__init__('state_manager')
+
+        self.declare_parameter('sim_mode', False)
+        self.sim_mode = self.get_parameter('sim_mode').get_parameter_value().bool_value
+
+        self.get_logger().info(f"Simulation mode: {self.sim_mode}")
+        
+        if self.sim_mode:
+            self.get_logger().info("Simulation mode enabled")
+            self.cmd_pub = self.create_publisher(
+                JointTrajectory,
+                '/glove_controller/joint_trajectory',
+                10
+            )
+            self.sim_timer = self.create_timer(
+                0.01,
+                self.publish_to_simulation
+            )
 
         self.lock = Lock()
 
@@ -215,45 +233,80 @@ class StateManager(Node):
         
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
         self.timer = self.create_timer(0.01, self.publish_states)
-
-
-    def publish_states(self):
-        msg = JointState()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.name = self.joint_names
-        msg.position = [float(v) for v in self.base_positions]
+    
+    def get_current_positions(self):
+        positions = [0.0] * 12
 
         with self.lock:
             sd = self.serial_data.copy()
 
         try:
             #Thumb
-            msg.position[0] = self.base_positions[0] - math.radians(sd[3])
-            msg.position[1] = self.base_positions[1] + math.radians(sd[2])
-            msg.position[2] = self.base_positions[2] - math.radians(sd[1])
-            msg.position[3] = self.base_positions[3] + math.radians(sd[0])
+            positions[0] = self.base_positions[0] - math.radians(sd[3])
+            positions[1] = self.base_positions[1] + math.radians(sd[2])
+            positions[2] = self.base_positions[2] - math.radians(sd[1])
+            positions[3] = self.base_positions[3] + math.radians(sd[0])
 
             #F1
-            msg.position[4] = self.base_positions[4] - math.radians(sd[7])
-            msg.position[5] = self.base_positions[5] + math.radians(sd[6])
-            msg.position[6] = self.base_positions[6] - math.radians(sd[5])
-            msg.position[7] = self.base_positions[7] + math.radians(sd[4])
+            positions[4] = self.base_positions[4] - math.radians(sd[7])
+            positions[5] = self.base_positions[5] + math.radians(sd[6])
+            positions[6] = self.base_positions[6] - math.radians(sd[5])
+            positions[7] = self.base_positions[7] + math.radians(sd[4])
 
             #F2
-            msg.position[8] = self.base_positions[8] - math.radians(sd[11])
-            msg.position[9] = self.base_positions[9] - math.radians(sd[10])
-            msg.position[10] = self.base_positions[10] - math.radians(sd[9])
-            msg.position[11] = self.base_positions[11] + math.radians(sd[8])
+            positions[8] = self.base_positions[8] - math.radians(sd[11])
+            positions[9] = self.base_positions[9] - math.radians(sd[10])
+            positions[10] = self.base_positions[10] - math.radians(sd[9])
+            positions[11] = self.base_positions[11] + math.radians(sd[8])
 
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
 
-        try:
-            self.publish_base_tf()
-        except Exception as e:
-            self.get_logger().warn(f"TF publish error: {e}")
+        return positions
+    
+    def publish_trajectory(self, positions):
+        traj = JointTrajectory()
+        traj.header.stamp = self.get_clock().now().to_msg()
+        traj.joint_names = self.joint_names
 
-        self.pub.publish(msg)
+        point = JointTrajectoryPoint()
+        point.positions = positions
+        point.time_from_start.sec = 0
+        point.time_from_start.nanosec = 10000000  # 10 ms
+
+        traj.points.append(point)
+
+        self.cmd_pub.publish(traj)
+
+    def publish_states(self):
+        positions = self.get_current_positions()
+
+        js = JointState()
+        js.header.stamp = self.get_clock().now().to_msg()
+        js.name = self.joint_names
+        js.position = positions
+
+        self.pub.publish(js)
+        self.publish_base_tf()
+
+        if self.sim_mode:
+            self.publish_trajectory(positions)
+
+
+
+    def publish_to_simulation(self):
+        traj = JointTrajectory()
+        traj.joint_names = self.joint_names
+
+        point = JointTrajectoryPoint()
+        point.positions = self.get_current_positions()
+        point.time_from_start.sec = 0
+        point.time_from_start.nanosec = 10000000  # 10ms
+
+        traj.points.append(point)
+
+        self.cmd_pub.publish(traj)
+
 
 
 # =========================

@@ -130,7 +130,11 @@ def generate_launch_description():
         Node(
             package='state_manager',
             executable='state_manager',
-            output='screen'
+            output='screen',
+            arguments=[
+                '--ros-args',
+                '-p', 'sim_mode:=true'
+            ]
         ),
 
         Node(
