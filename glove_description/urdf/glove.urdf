@@ -512,14 +512,15 @@
   </ros2_control>
 
   <gazebo>
-    <plugin
-        filename="libgz_ros2_control-system.so"
+    <plugin filename="libgz_ros2_control-system.so"
         name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-
+      <ros>
+        <namespace>/</namespace>
+      </ros>
       <parameters>/home/harry/glove/src/glove_description/config/controllers.yaml</parameters>
-
     </plugin>
   </gazebo>
+
 
   
 </robot>

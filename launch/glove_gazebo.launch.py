@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, SetEnvironmentVariable
+from launch.actions import ExecuteProcess, SetEnvironmentVariable, TimerAction
 from launch_ros.actions import Node
 from launch.substitutions import Command, PathJoinSubstitution, EnvironmentVariable
 from launch_ros.substitutions import FindPackageShare
@@ -7,7 +7,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
-    
+
     robot_description = ParameterValue(
         Command([
             'cat ',
@@ -20,16 +20,29 @@ def generate_launch_description():
         value_type=str
     )
 
+    # -----------------------
+    # Controller spawners
+    # -----------------------
+
+    joint_state_broadcaster_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_state_broadcaster', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
+
+    glove_controller_spawner = Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['glove_controller', '--controller-manager', '/controller_manager'],
+        output='screen',
+    )
+
     return LaunchDescription([
 
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            parameters=[
-                {'robot_description': robot_description},
-                {'use_sim_time': True}
-            ]
-        ),
+        # -----------------------
+        # Environment variables
+        # -----------------------
 
         SetEnvironmentVariable(
             name='GZ_SIM_RESOURCE_PATH',
@@ -47,24 +60,47 @@ def generate_launch_description():
             ]
         ),
 
-        # Start Gazebo
-        ExecuteProcess(
-            cmd=['gz', 'sim', '-r', 'shapes.sdf'],
+        # -----------------------
+        # Robot State Publisher
+        # -----------------------
+
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            parameters=[
+                {'robot_description': robot_description},
+                {'use_sim_time': True}
+            ],
             output='screen'
         ),
 
-        # Spawn robot into Gazebo
+        # -----------------------
+        # Start Gazebo (empty world)
+        # -----------------------
+
+        ExecuteProcess(
+            cmd=['gz', 'sim', '-r', 'empty.sdf'],
+            output='screen'
+        ),
+
+        # -----------------------
+        # Spawn robot
+        # -----------------------
+
         Node(
             package='ros_gz_sim',
             executable='create',
             arguments=[
                 '-topic', 'robot_description',
                 '-name', 'glove',
-                '-world', 'shapes',
                 '-x', '0', '-y', '0', '-z', '1.5'
             ],
             output='screen'
         ),
+
+        # -----------------------
+        # Clock bridge
+        # -----------------------
 
         Node(
             package='ros_gz_bridge',
@@ -75,14 +111,31 @@ def generate_launch_description():
             output='screen'
         ),
 
+        # -----------------------
+        # Spawn controllers (delay required)
+        # -----------------------
+
+        TimerAction(
+            period=5.0,
+            actions=[
+                joint_state_broadcaster_spawner,
+                glove_controller_spawner
+            ]
+        ),
+
+        # -----------------------
+        # Your nodes
+        # -----------------------
+
         Node(
             package='state_manager',
             executable='state_manager',
+            output='screen'
         ),
 
         Node(
             package='encoder_reader',
             executable='encoder_reader',
-        )
-
+            output='screen'
+        ),
     ])

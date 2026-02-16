@@ -89,34 +89,45 @@ class StateManager(Node):
         # =====================
         # Subscriptions
         # =====================
+        try:
+            self.serial_sub = self.create_subscription(
+                Float32MultiArray,
+                'serial/data',
+                self.serial_data_callback,
+                10
+            )
+        except Exception as e:
+            self.get_logger().error(f"Failed to create serial subscription: {e}")
+            
+        try:
+            self.dynamixel_sub = self.create_subscription(
+                Float32MultiArray,
+                'dynamixel_pos',
+                self.dynamixel_pos_callback,
+                10
+            )
+        except Exception as e:
+            self.get_logger().error(f"Failed to create dynamixel subscription: {e}")
 
-        self.serial_sub = self.create_subscription(
-            Float32MultiArray,
-            'serial/data',
-            self.serial_data_callback,
-            10
-        )
+        try:
+            self.imu_sub = self.create_subscription(
+                Float32MultiArray,
+                '/serial/imu',
+                self.imu_callback,
+                10
+            )
+        except Exception as e:
+            self.get_logger().error(f"Failed to create IMU subscription: {e}")
 
-        self.dynamixel_sub = self.create_subscription(
-            Float32MultiArray,
-            'dynamixel_pos',
-            self.dynamixel_pos_callback,
-            10
-        )
-
-        self.imu_sub = self.create_subscription(
-            Float32MultiArray,
-            '/serial/imu',
-            self.imu_callback,
-            10
-        )
-
-        self.haply_pos_sub = self.create_subscription(
-            Float32MultiArray,
-            'haply_position',
-            self.haply_position_callback,
-            10
-        )
+        try:
+            self.haply_pos_sub = self.create_subscription(
+                Float32MultiArray,
+                'haply_position',
+                self.haply_position_callback,
+                10
+            )
+        except Exception as e:
+            self.get_logger().error(f"Failed to create Haply position subscription: {e}")
 
         self.tf_broadcaster = TransformBroadcaster(self)
         self.get_logger().info("StateManager initialized")
@@ -164,9 +175,9 @@ class StateManager(Node):
         t.header.frame_id = 'world'
         t.child_frame_id  = 'base'
 
-        t.transform.translation.x = 1000 * base_position[0]
-        t.transform.translation.y = 1000 * base_position[1]
-        t.transform.translation.z = 1000 * base_position[2]
+        t.transform.translation.x = 10 * base_position[0]
+        t.transform.translation.y = 10 * base_position[1]
+        t.transform.translation.z = 10 * base_position[2]
 
         self.get_logger().debug(f"Publishing TF - Position: {base_position}, RPY: {self.imu_rpy}")
 
