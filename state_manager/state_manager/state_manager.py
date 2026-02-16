@@ -95,14 +95,14 @@ class StateManager(Node):
 
         self.lock = Lock()
 
-        # Serial finger bend data
+        # Serial finger bend data (initialized to 180.0 - encoder midpoint/neutral position)
         self.serial_data = [180.0] * 12
 
         # Dynamixel joint positions
         self.dynamixel_positions = [0.0, 0.0, 0.0]
 
-        # IMU orientation (roll, pitch, yaw) in radians
-        self.imu_xyzw = [0.0, 0.0, 0.0, 0.0]
+        # IMU orientation (x, y, z, w quaternion) - initialized to identity (no rotation)
+        self.imu_xyzw = [0.0, 0.0, 0.0, 1.0]
 
         self.haply_position = [0.0, 0.0, 1.0]
 
@@ -186,7 +186,8 @@ class StateManager(Node):
     def imu_callback(self, msg):
         if len(msg.data) != 4:
             return
-        self.imu_xyzw = [float(v) for v in msg.data]
+        with self.lock:
+            self.imu_xyzw = [float(v) for v in msg.data]
 
     def update_sim_base_pose(self):
         if not self.set_pose_client.service_is_ready():
@@ -221,12 +222,15 @@ class StateManager(Node):
         t.transform.translation.y = 10 * base_position[1]
         t.transform.translation.z = 10 * base_position[2] + 2
 
-        self.get_logger().debug(f"Publishing TF - Position: {base_position}, XYZW: {self.imu_xyzw}")
+        with self.lock:
+            imu_data = self.imu_xyzw.copy()
+        
+        self.get_logger().debug(f"Publishing TF - Position: {base_position}, XYZW: {imu_data}")
 
-        t.transform.rotation.x = self.imu_xyzw[0]
-        t.transform.rotation.y = self.imu_xyzw[1]
-        t.transform.rotation.z = self.imu_xyzw[2]
-        t.transform.rotation.w = self.imu_xyzw[3]
+        t.transform.rotation.x = imu_data[0]
+        t.transform.rotation.y = imu_data[1]
+        t.transform.rotation.z = imu_data[2]
+        t.transform.rotation.w = imu_data[3]
 
         self.tf_broadcaster.sendTransform(t)
 
@@ -256,31 +260,36 @@ class StateManager(Node):
         
         self.pub = self.create_publisher(JointState, 'joint_states', 10)
         self.timer = self.create_timer(0.01, self.publish_states)
-    
+
     def get_current_positions(self):
         positions = [0.0] * 12
 
         with self.lock:
             sd = self.serial_data.copy()
 
+        # Convert encoder values to radians relative to 180° (neutral position)
+        # If encoder is 180 (neutral), current_val is 0.0
+        # This represents the deviation from the rest pose
+        current_val = [math.radians(v - 180.0) for v in sd]
+
         try:
-            #Thumb
-            positions[0] = self.base_positions[0] - math.radians(sd[3])
-            positions[1] = self.base_positions[1] + math.radians(sd[2])
-            positions[2] = self.base_positions[2] - math.radians(sd[1])
-            positions[3] = self.base_positions[3] + math.radians(sd[0])
+            # Thumb - base_positions represents the neutral/rest pose
+            positions[0] = self.base_positions[0] - current_val[3]
+            positions[1] = self.base_positions[1] + current_val[2]
+            positions[2] = self.base_positions[2] - current_val[1]
+            positions[3] = self.base_positions[3] + current_val[0]
 
-            #F1
-            positions[4] = self.base_positions[4] - math.radians(sd[7])
-            positions[5] = self.base_positions[5] + math.radians(sd[6])
-            positions[6] = self.base_positions[6] - math.radians(sd[5])
-            positions[7] = self.base_positions[7] + math.radians(sd[4])
+            # F1
+            positions[4] = self.base_positions[4] - current_val[7]
+            positions[5] = self.base_positions[5] + current_val[6]
+            positions[6] = self.base_positions[6] - current_val[5]
+            positions[7] = self.base_positions[7] + current_val[4]
 
-            #F2
-            positions[8] = self.base_positions[8] - math.radians(sd[11])
-            positions[9] = self.base_positions[9] - math.radians(sd[10])
-            positions[10] = self.base_positions[10] - math.radians(sd[9])
-            positions[11] = self.base_positions[11] + math.radians(sd[8])
+            # F2
+            positions[8] = self.base_positions[8] - current_val[11]
+            positions[9] = self.base_positions[9] - current_val[10]
+            positions[10] = self.base_positions[10] - current_val[9]
+            positions[11] = self.base_positions[11] + current_val[8]
 
             # Wrap angles to +/- pi to align with URDF safety limits
             positions = [math.atan2(math.sin(p), math.cos(p)) for p in positions]
@@ -298,7 +307,7 @@ class StateManager(Node):
         point = JointTrajectoryPoint()
         point.positions = positions
         point.time_from_start.sec = 0
-        point.time_from_start.nanosec = 10000000  # 10 ms
+        point.time_from_start.nanosec = 50000000  # 50 ms
 
         traj.points.append(point)
 
@@ -323,12 +332,13 @@ class StateManager(Node):
     def publish_to_simulation(self):
         self.update_sim_base_pose()
         traj = JointTrajectory()
+        traj.header.stamp = self.get_clock().now().to_msg()
         traj.joint_names = self.joint_names
 
         point = JointTrajectoryPoint()
         point.positions = self.get_current_positions()
         point.time_from_start.sec = 0
-        point.time_from_start.nanosec = 50000000  # 10ms
+        point.time_from_start.nanosec = 50000000  # 50ms
 
         traj.points.append(point)
 

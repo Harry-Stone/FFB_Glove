@@ -92,6 +92,18 @@ class EncoderReaderNode(Node):
         self.last_log_time = 0.0
         self.log_period = 5.0  # seconds
 
+        # Low-pass filter parameters
+        self.alpha = 0.2  # Smoothing factor (0.1 = very smooth/slow, 0.9 = twitchy/fast)
+        self.filtered_angles = [0.0] * 12
+
+    def filter_encoder_data(self, raw_angles):
+        """Apply low-pass filter to encoder data for smoothing"""
+        for i in range(len(raw_angles)):
+            # Low Pass Filter Formula: Y = (alpha * X) + (1-alpha) * Y_prev
+            self.filtered_angles[i] = (self.alpha * raw_angles[i]) + \
+                                      ((1.0 - self.alpha) * self.filtered_angles[i])
+        return self.filtered_angles
+
     def cleanup(self):
         if self.ser and self.ser.is_open:
             try:
@@ -143,17 +155,20 @@ class EncoderReaderNode(Node):
 
             data.append(angle)
 
+        # Apply low-pass filter
+        filtered_data = self.filter_encoder_data(data)
+
         # Publish
         msg = Float32MultiArray()
-        msg.data = data
+        msg.data = filtered_data
         self.pub.publish(msg)
 
         # Rate-limited INFO log
         now = time.monotonic()
         if now - self.last_log_time >= self.log_period:
             self.get_logger().info(
-                "Encoder angles: " +
-                ", ".join(f"{v:.2f}" for v in data)
+                "Encoder angles (filtered): " +
+                ", ".join(f"{v:.2f}" for v in filtered_data)
             )
             self.last_log_time = now
 

@@ -7,6 +7,21 @@ from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
 
+    delayed_state_manager = TimerAction(
+        period=3.0,  # Wait 3 seconds for Gazebo to load and the robot to spawn
+        actions=[
+            Node(
+                package='state_manager',
+                executable='state_manager',
+                output='screen',
+                parameters=[ 
+                    {'sim_mode': True}, 
+                    {'use_sim_time': True}
+                ]
+            )
+        ]
+    )
+
     robot_description = ParameterValue(
         Command([
             'cat ',
@@ -124,16 +139,6 @@ def generate_launch_description():
         # -----------------------
 
         Node(
-            package='state_manager',
-            executable='state_manager',
-            output='screen',
-            arguments=[
-                '--ros-args',
-                '-p', 'sim_mode:=true'
-            ]
-        ),
-
-        Node(
             package='encoder_reader',
             executable='encoder_reader',
             output='screen'
@@ -144,4 +149,6 @@ def generate_launch_description():
             executable='haply_connection_manager',
             output='screen'
         ),
+
+        delayed_state_manager
     ])
