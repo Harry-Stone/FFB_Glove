@@ -158,6 +158,11 @@ class StateManager(Node):
             self.get_logger().error(f"Failed to create Haply position subscription: {e}")
 
         self.tf_broadcaster = TransformBroadcaster(self)
+        
+        # Deadband filter - reduces jitter from encoder noise
+        self.prev_positions = [0.0] * 12
+        self.threshold = 0.005  # Radians (approx 0.3 degrees)
+        
         self.get_logger().info("StateManager initialized")
 
     def serial_data_callback(self, msg):
@@ -293,11 +298,24 @@ class StateManager(Node):
 
             # Wrap angles to +/- pi to align with URDF safety limits
             positions = [math.atan2(math.sin(p), math.cos(p)) for p in positions]
+            
+            # Apply deadband filter to reduce encoder noise jitter
+            positions = [self.apply_deadband(positions[i], self.prev_positions[i]) 
+                        for i in range(len(positions))]
+            
+            # Update previous positions for next iteration
+            self.prev_positions = positions.copy()
 
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
 
         return positions
+
+    def apply_deadband(self, new_pos, old_pos):
+        """Apply deadband filter - only update if change exceeds threshold"""
+        if abs(new_pos - old_pos) < self.threshold:
+            return old_pos
+        return new_pos
     
     def publish_trajectory(self, positions):
         traj = JointTrajectory()

@@ -4,6 +4,7 @@
   <gazebo reference="base">
     <kinematic>true</kinematic>
     <gravity>false</gravity>
+    <self_collide>false</self_collide>
   </gazebo>
 
   <material name="Material_004">
@@ -440,23 +441,23 @@
     <dynamics damping="1.5" friction="0.5" />
   </joint>
 
-  <gazebo reference="tl1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f1l1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f2l1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="tl1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f1l1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f2l1"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="tl2"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f1l2"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f2l2"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="tl3"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f1l3"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f2l3"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="base"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="bridge"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="Txc330"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f1xc330"><self_collide>false</self_collide></gazebo>
-  <gazebo reference="f2xc330"><self_collide>false</self_collide></gazebo>
+  <!-- Disable gravity and self-collision for all links -->
+  <gazebo reference="tl0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="Txc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1xc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2xc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="bridge"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
   
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
