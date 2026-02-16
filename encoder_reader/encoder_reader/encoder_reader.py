@@ -73,6 +73,7 @@ class EncoderReaderNode(Node):
         try:
             self.ser = serial.Serial(port, baud, timeout=0.01)
             self.get_logger().info(f"Opened serial port {port} @ {baud}")
+            self.get_logger().info(f"running in {self.units} mode with offsets: {self.offsets}")
         except Exception as e:
             raise RuntimeError(f"Failed to open serial port: {e}")
 
@@ -150,8 +151,11 @@ class EncoderReaderNode(Node):
             if self.units == 'rad':
                 angle = c * self.rad_per_count
                 angle += self.offsets[i] * (3.141592653589793 / 180.0)
+                angle -= 3.141592653589793  # Center at 0 radians
             else:  # degrees
                 angle = c * self.deg_per_count + self.offsets[i]
+                angle -= 180.0  # Center at 0 degrees
+                
 
             data.append(angle)
 
