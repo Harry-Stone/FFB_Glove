@@ -17,7 +17,7 @@ robot_state_publisher:
       <link name="base">
         <visual>
           <geometry>
-            <mesh filename="meshes/base_visual.stl" />
+            <mesh filename="package://glove_description/meshes/base_visual.stl" />
           </geometry>
           <material name="Material_004" />
         </visual>
@@ -35,7 +35,7 @@ robot_state_publisher:
       <link name="tl0">
         <visual>
           <geometry>
-            <mesh filename="meshes/tl0_visual.stl" />
+            <mesh filename="package://glove_description/meshes/tl0_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -53,7 +53,7 @@ robot_state_publisher:
       <link name="Txc330">
         <visual>
           <geometry>
-            <mesh filename="meshes/Txc330_visual.stl" />
+            <mesh filename="package://glove_description/meshes/Txc330_visual.stl" />
           </geometry>
           <material name="Material_001" />
         </visual>
@@ -71,7 +71,7 @@ robot_state_publisher:
       <link name="tl1">
         <visual>
           <geometry>
-            <mesh filename="meshes/tl1_001_visual.stl" />
+            <mesh filename="package://glove_description/meshes/tl1_001_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -89,7 +89,7 @@ robot_state_publisher:
       <link name="tl2">
         <visual>
           <geometry>
-            <mesh filename="meshes/tl2_001_visual.stl" />
+            <mesh filename="package://glove_description/meshes/tl2_001_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -107,7 +107,7 @@ robot_state_publisher:
       <link name="tl3">
         <visual>
           <geometry>
-            <mesh filename="meshes/tl3_visual.stl" />
+            <mesh filename="package://glove_description/meshes/tl3_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -125,7 +125,7 @@ robot_state_publisher:
       <link name="bridge">
         <visual>
           <geometry>
-            <mesh filename="meshes/bridge_visual.stl" />
+            <mesh filename="package://glove_description/meshes/bridge_visual.stl" />
           </geometry>
           <material name="Material_004" />
         </visual>
@@ -143,7 +143,7 @@ robot_state_publisher:
       <link name="f1l0">
         <visual>
           <geometry>
-            <mesh filename="meshes/f1l0_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f1l0_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -161,7 +161,7 @@ robot_state_publisher:
       <link name="f1xc330">
         <visual>
           <geometry>
-            <mesh filename="meshes/f1xc330_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f1xc330_visual.stl" />
           </geometry>
           <material name="Material_001" />
         </visual>
@@ -179,7 +179,7 @@ robot_state_publisher:
       <link name="f1l1">
         <visual>
           <geometry>
-            <mesh filename="meshes/f1l1_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f1l1_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -197,7 +197,7 @@ robot_state_publisher:
       <link name="f1l2">
         <visual>
           <geometry>
-            <mesh filename="meshes/f1l2_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f1l2_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -215,7 +215,7 @@ robot_state_publisher:
       <link name="f1l3">
         <visual>
           <geometry>
-            <mesh filename="meshes/f1l3_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f1l3_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -233,7 +233,7 @@ robot_state_publisher:
       <link name="f2l0">
         <visual>
           <geometry>
-            <mesh filename="meshes/f2l0_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f2l0_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -251,7 +251,7 @@ robot_state_publisher:
       <link name="f2xc330">
         <visual>
           <geometry>
-            <mesh filename="meshes/xc330_visual.stl" />
+            <mesh filename="package://glove_description/meshes/xc330_visual.stl" />
           </geometry>
           <material name="Material_001" />
         </visual>
@@ -269,7 +269,7 @@ robot_state_publisher:
       <link name="f2l1">
         <visual>
           <geometry>
-            <mesh filename="meshes/f2l1_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f2l1_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -287,7 +287,7 @@ robot_state_publisher:
       <link name="f2l2">
         <visual>
           <geometry>
-            <mesh filename="meshes/f2l2_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f2l2_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>
@@ -305,7 +305,7 @@ robot_state_publisher:
       <link name="f2l3">
         <visual>
           <geometry>
-            <mesh filename="meshes/f2l3_visual.stl" />
+            <mesh filename="package://glove_description/meshes/f2l3_visual.stl" />
           </geometry>
           <material name="Material_003" />
         </visual>

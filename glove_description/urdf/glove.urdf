@@ -1,0 +1,640 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="glove">
+
+  <gazebo reference="base">
+    <kinematic>true</kinematic>
+    <gravity>false</gravity>
+    <self_collide>false</self_collide>
+  </gazebo>
+
+  <material name="Material_004">
+    <color rgba="0.800016 0.647821 0.007821 1" />
+  </material>
+  <material name="Material_003">
+    <color rgba="0.180552 0.180552 0.180552 1" />
+  </material>
+  <material name="Material_001">
+    <color rgba="0 0 0 1" />
+  </material>
+  
+  <link name="base">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/base_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_004" />
+    </visual>
+    <collision>
+      <origin xyz="0.20366289 0.81827148 -0.13441046" rpy="0 0 0" />
+      <geometry>
+        <box size="1.1808609 2 0.41493954" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="10" />
+      <inertia ixx="3.47681235e-03" ixy="0" ixz="0" iyy="1.305506072e-03" iyz="0" izz="4.495360389e-03" />
+    </inertial>
+  </link>
+  <link name="tl0">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/tl0_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="0.0023243 -0.17365746 0.04371803" rpy="0 0 0" />
+      <geometry>
+        <box size="0.24825493 0.42810646 0.38781082" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="2.78060312e-04" ixy="0" ixz="0" iyy="1.76689786e-04" iyz="0" izz="2.04088043e-04" />
+    </inertial>
+  </link>
+  <link name="Txc330">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/Txc330_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_001" />
+    </visual>
+    <collision>
+      <origin xyz="0.00046047 0.07499992 0.06499842" rpy="0 0 0" />
+      <geometry>
+        <box size="0.20183695 0.34000015 0.26141058" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.53279662e-04" ixy="0" ixz="0" iyy="9.08947041e-04" iyz="0" izz="1.30281881e-04" />
+    </inertial>
+  </link>
+  <link name="tl1">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/tl1_001_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="-0.00217117 -0.48837063 -0.01631042" rpy="0 0 0" />
+      <geometry>
+        <box size="0.18212158 1.15992867 0.12568717" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.134359811e-03" ixy="0" ixz="0" iyy="4.08046131e-04" iyz="0" izz="1.148835649e-03" />
+    </inertial>
+  </link>
+  <link name="tl2">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/tl2_001_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="-5.779e-05 -0.29956448 0.01249594" rpy="0 0 0" />
+      <geometry>
+        <box size="0.14144591 0.74010262 0.1210587" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="4.68672576e-04" ixy="0" ixz="0" iyy="2.8885131e-04" iyz="0" izz="4.73132356e-04" />
+    </inertial>
+  </link>
+  <link name="tl3">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/tl3_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision name="tl3_collision">
+      <origin xyz="0.11426994 -0.14165771 6.521e-05" rpy="0 0 0" />
+      <geometry>
+        <box size="0.3627364 0.39274078 0.28458366" />
+      </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="1.96027654e-03" ixy="0" ixz="0" iyy="1.77137963e-03" iyz="0" izz="2.38185847e-03" />
+    </inertial>
+  </link>
+  <link name="bridge">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/bridge_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_004" />
+    </visual>
+    <collision>
+      <origin xyz="0.00392461 -0.00753861 0.23125851" rpy="0 0 0" />
+      <geometry>
+        <box size="0.72021408 0.2 0.385" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.56854167e-04" ixy="0" ixz="0" iyy="5.55777768e-04" iyz="0" izz="4.65590268e-04" />
+    </inertial>
+  </link>
+  <link name="f1l0">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f1l0_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="0.0437344 -0.17365738 -0.00199278" rpy="0 0 0" />
+      <geometry>
+        <box size="0.38596191 0.42810646 0.24533583" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="2.02887341e-04" ixy="0" ixz="0" iyy="1.74296889e-04" iyz="0" izz="2.76868117e-04" />
+    </inertial>
+  </link>
+  <link name="f1xc330">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f1xc330_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_001" />
+    </visual>
+    <collision>
+      <origin xyz="0.06500004 0.07499996 2e-04" rpy="0 0 0" />
+      <geometry>
+        <box size="0.26000019 0.34000011 0.20000008" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.29666757e-04" ixy="0" ixz="0" iyy="8.96667751e-04" iyz="0" izz="1.52666814e-04" />
+    </inertial>
+  </link>
+  <link name="f1l1">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f1l1_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="-0.01632231 -0.48834408 0.00550089" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12441303 1.16116333 0.18942066" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.153483722e-03" ixy="0" ixz="0" iyy="4.27989921e-04" iyz="0" izz="1.136482401e-03" />
+    </inertial>
+  </link>
+  <link name="f1l2">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f1l2_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="0.01249349 -0.29956177 -0.00131289" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12000027 0.7407753 0.14415758" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="4.74607877e-04" ixy="0" ixz="0" iyy="2.93178941e-04" iyz="0" izz="4.6929009e-04" />
+    </inertial>
+  </link>
+  <link name="f1l3">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f1l3_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision name="f1l3_collision">
+      <origin xyz="0.00294435 -0.1475145 0.06922911" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25454088 0.39777729 0.30544603" />
+      </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="2.09603377e-03" ixy="0" ixz="0" iyy="1.31740283e-03" iyz="0" izz="1.85848194e-03" />
+    </inertial>
+  </link>
+  <link name="f2l0">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f2l0_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="-0.0437344 -0.17365738 0.00199276" rpy="0 0 0" />
+      <geometry>
+        <box size="0.38596191 0.42810646 0.24533583" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="2.02887341e-04" ixy="0" ixz="0" iyy="1.74296889e-04" iyz="0" izz="2.76868117e-04" />
+    </inertial>
+  </link>
+  <link name="f2xc330">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/xc330_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_001" />
+    </visual>
+    <collision>
+      <origin xyz="-0.06500002 0.07499998 2e-04" rpy="0 0 0" />
+      <geometry>
+        <box size="0.26000006 0.34000004 0.20000002" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.29666695e-04" ixy="0" ixz="0" iyy="8.96666981e-04" iyz="0" izz="1.52666713e-04" />
+    </inertial>
+  </link>
+  <link name="f2l1">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f2l1_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="0.01632236 -0.48837238 -0.00162706" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12441278 1.1597702 0.18022671" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="1.147957158e-03" ixy="0" ixz="0" iyy="3.99668371e-04" iyz="0" izz="1.133787885e-03" />
+    </inertial>
+  </link>
+  <link name="f2l2">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f2l2_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision>
+      <origin xyz="-0.0124935 -0.29956436 -0.00037106" rpy="0 0 0" />
+      <geometry>
+        <box size="0.12000013 0.74 0.14000005" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1" />
+      <inertia ixx="4.72666678e-04" ixy="0" ixz="0" iyy="2.83333711e-04" iyz="0" izz="4.6833336e-04" />
+    </inertial>
+  </link>
+  <link name="f2l3">
+    <visual>
+      <geometry>
+        <mesh filename="package://glove_description/meshes/f2l3_visual.stl" scale="0.01 0.01 0.01" />
+      </geometry>
+      <material name="Material_003" />
+    </visual>
+    <collision name="f2l3_collision">
+      <origin xyz="0.00294447 -0.14558609 0.07319756" rpy="0 0 0" />
+      <geometry>
+        <box size="0.25454054 0.39008659 0.29511078" />
+      </geometry>
+      <surface>
+        <contact>
+          <ode>
+            <kp>1000000.0</kp>
+            <kd>1000.0</kd>
+            <max_vel>0.01</max_vel>
+            <min_depth>0.0001</min_depth>
+          </ode>
+        </contact>
+        <friction>
+          <ode>
+            <mu>2.0</mu>
+            <mu2>2.0</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    <inertial>
+      <mass value="1.0" />
+      <inertia ixx="1.99381602e-03" ixy="0" ixz="0" iyy="1.26567715e-03" iyz="0" izz="1.80798697e-03" />
+    </inertial>
+  </link>
+  
+  <joint name="tl0_joint" type="revolute">
+    <origin xyz="0.57217976 0.83967529 -0.24119789" rpy="0 0 0" />
+    <parent link="base" />
+    <child link="tl0" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="Txc330_joint" type="fixed">
+    <origin xyz="0.00220604 -0.31780266 0.01792219" rpy="0 0 0" />
+    <parent link="tl0" />
+    <child link="Txc330" />
+  </joint>
+  <joint name="tl1_joint" type="revolute">
+    <origin xyz="0.00653183 0.00504234 -0.09755316" rpy="0 0 0" />
+    <parent link="Txc330" />
+    <child link="tl1" />
+    <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="tl2_joint" type="revolute">
+    <origin xyz="-0.00382935 -0.99693802 0.00991375" rpy="0 0 0" />
+    <parent link="tl1" />
+    <child link="tl2" />
+    <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="tl3_joint" type="revolute">
+    <origin xyz="-0.00062885 -0.59897427 0.00053812" rpy="0 0 0" />
+    <parent link="tl2" />
+    <child link="tl3" />
+    <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="bridge_joint" type="fixed">
+    <parent link="base" />
+    <child link="bridge" />
+  </joint>
+  <joint name="f1l0_joint" type="revolute">
+    <origin xyz="0.17717194 -0.00927605 0.2041119" rpy="0 0 0" />
+    <parent link="base" />
+    <child link="f1l0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f1xc330_joint" type="fixed">
+    <origin xyz="0.01793839 -0.31780258 -0.02094622" rpy="0 0 0" />
+    <parent link="f1l0" />
+    <child link="f1xc330" />
+    <dynamics damping="0" friction="0" />
+  </joint>
+  <joint name="f1l1_joint" type="revolute">
+    <origin xyz="-0.09750091 0.00504238 0.01160593" rpy="0 0 0" />
+    <parent link="f1xc330" />
+    <child link="f1l1" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f1l2_joint" type="revolute">
+    <origin xyz="0.00989426 -0.99801514 -0.00898172" rpy="0 0 0" />
+    <parent link="f1l1" />
+    <child link="f1l2" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f1l3_joint" type="revolute">
+    <origin xyz="-0.00267555 -0.59855103 -0.00097271" rpy="0 0 0" />
+    <parent link="f1l2" />
+    <child link="f1l3" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f2l0_joint" type="revolute">
+    <origin xyz="-0.17623764 -0.00927605 0.19505016" rpy="0 0 0" />
+    <parent link="base" />
+    <child link="f2l0" />
+    <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="xc330_joint" type="fixed">
+    <origin xyz="-0.01793839 -0.31780258 -0.01680552" rpy="0 0 0" />
+    <parent link="f2l0" />
+    <child link="f2xc330" />
+  </joint>
+  <joint name="f2l1_joint" type="revolute">
+    <origin xyz="0.09750091 0.00504238 0.02614582" rpy="0 0 0" />
+    <parent link="f2xc330" />
+    <child link="f2l1" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f2l2_joint" type="revolute">
+    <origin xyz="-0.00989425 -1.0017691 -0.02149185" rpy="0 0 0" />
+    <parent link="f2l1" />
+    <child link="f2l2" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+  <joint name="f2l3_joint" type="revolute">
+    <origin xyz="0.00267555 -0.5988974 -0.00220499" rpy="0 0 0" />
+    <parent link="f2l2" />
+    <child link="f2l3" />
+    <axis xyz="1 0 0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="1.5" friction="0.5" />
+  </joint>
+
+  <!-- Disable gravity and self-collision for all links -->
+  <gazebo reference="tl0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="Txc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1xc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l0"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l1"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l2"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l3"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2xc330"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+  <gazebo reference="bridge"><gravity>false</gravity><self_collide>false</self_collide></gazebo>
+
+  <!-- create contact sensors for fingertips-->
+  <gazebo reference="f1l3">
+    <sensor name="f1l3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>f1l3_collision_collision</collision>
+      </contact>
+      <topic>f1l3_contact</topic>
+    </sensor>
+  </gazebo>
+  <gazebo reference="f2l3">
+    <sensor name="f2l3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>f2l3_collision_collision</collision>
+      </contact>
+      <topic>f2l3_contact</topic>
+    </sensor>
+  </gazebo>
+  <gazebo reference="tl3">
+    <sensor name="tl3_contact_sensor" type="contact">
+      <always_on>true</always_on>
+      <update_rate>50</update_rate>
+      <contact>
+        <collision>tl3_collision_collision</collision>
+      </contact>
+      <topic>tl3_contact</topic>
+    </sensor>
+  </gazebo>
+
+  
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+
+    <joint name="tl0_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="tl1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+      <joint name="tl2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="tl3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+      <joint name="f1l0_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="f1l1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+      <joint name="f1l2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="f1l3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+      <joint name="f2l0_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="f2l1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+      <joint name="f2l2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="f2l3_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgz_ros2_control-system.so"
+        name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <ros>
+        <namespace>/</namespace>
+      </ros>
+      <parameters>/home/harry/glove/src/glove_description/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-touch-system" name="gz::sim::systems::Touch">
+      <target>f1l3</target>
+      <namespace>glove</namespace>
+      <time>0.001</time>
+      <enabled>true</enabled>
+    </plugin>
+  </gazebo>
+  
+</robot>

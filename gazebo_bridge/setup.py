@@ -1,17 +1,17 @@
 from setuptools import find_packages, setup
 
-package_name = 'glove_bringup'
+package_name = 'gazebo_bridge'
 
 setup(
     name=package_name,
     version='0.0.0',
     packages=find_packages(exclude=['test']),
     data_files=[
-        ('share/' + package_name + '/launch', ['launch/glove_system.launch.yaml']),
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
+    package_data={'': ['py.typed']},
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Harry Stone',
@@ -25,6 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'gazebo_bridge = gazebo_bridge.gazebo_bridge:main',
         ],
     },
 )

@@ -30,7 +30,7 @@
         "d1":{
             "ID":0,
             "upperLimit":8103,
-            "lowerLimit":6700,
+            "lowerLimit":6430,
             "mechanicalScaleFactor":0.087891,
             "zeroPoint":7103,
             "maxCurrentMilliamps":1000,
