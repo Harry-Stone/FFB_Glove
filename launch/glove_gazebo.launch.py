@@ -113,7 +113,10 @@ def generate_launch_description():
             executable='parameter_bridge',
             arguments=[
                 '/world/shapes/set_pose@ros_gz_interfaces/srv/SetEntityPose',
-                '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
+                '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+                '/world/shapes/model/glove/link/f1l3/sensor/f1l3_contact_sensor/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+                '/world/shapes/model/glove/link/f2l3/sensor/f2l3_contact_sensor/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
+                '/world/shapes/model/glove/link/tl3/sensor/tl3_contact_sensor/contact@ros_gz_interfaces/msg/Contacts[gz.msgs.Contacts',
             ],
             output='screen'
         ),
@@ -143,6 +146,18 @@ def generate_launch_description():
         Node(
             package='haply_connection_manager',
             executable='haply_connection_manager',
+            output='screen'
+        ),
+
+        Node(
+            package='force_feedback',
+            executable='force_feedback',
+            output='screen'
+        ),
+
+        Node(
+            package='dynamixel_manager',
+            executable='dynamixel_manager',
             output='screen'
         ),
 

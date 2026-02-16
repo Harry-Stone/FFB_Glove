@@ -3,18 +3,16 @@
 import rclpy
 from rclpy.node import Node
 
-from tf2_ros import Buffer, TransformListener
-from geometry_msgs.msg import TransformStamped
-
+from ros_gz_interfaces.msg import Contacts
 from std_msgs.msg import Float32MultiArray, Int8
 
-class MultiFingerEllipticalFFB(Node):
+class Sim_FFB(Node):
 
     def __init__(self):
-        super().__init__('multi_finger_elliptical_ffb')
+        super().__init__('sim_ffb_node')
 
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.declare_parameter('start_enabled', True)
+        self.enabled = self.get_parameter('start_enabled').get_parameter_value().bool_value
 
         # --- Control rate ---
         self.control_rate_hz = 200.0
@@ -31,14 +29,50 @@ class MultiFingerEllipticalFFB(Node):
         )
 
         # Enable / Disable
-        self.enabled = False
-
+        # `self.enabled` is set from the `start_enabled` parameter above.
+        # Do not override it here so the node can start enabled when requested.
         self.create_subscription(
             Int8,
-            'multi_finger_elliptical_ffb/enabled',
+            'ffb/enabled',
             self.enable_callback,
             10
         )
+
+        # Define the long Gazebo topics
+        self.contact_topics = {
+            'Index': '/world/shapes/model/glove/link/f1l3/sensor/f1l3_contact_sensor/contact',
+            'Middle': '/world/shapes/model/glove/link/f2l3/sensor/f2l3_contact_sensor/contact',
+            'Thumb': '/world/shapes/model/glove/link/tl3/sensor/tl3_contact_sensor/contact'
+        }
+
+        self.subscriptions_list = []
+
+        # Contact state per endpoint index (thumb, f1, f2)
+        self.contact_state = [False] * 3
+        # Targets and current outputs for ramping
+        self.ffb_targets = [0.0] * 3
+        self.ffb_currents = [0.0] * 3
+        self.max_current = 100.0  # mA to ramp to on contact
+        self.ramp_time = 0.3  # seconds to ramp up/down
+
+        # Create a subscriber for each finger. Map published finger names to
+        # indices matching the endpoint order used for commands (thumb, f1, f2).
+        name_to_index = {
+            'Thumb': 0,
+            'Index': 1,
+            'Middle': 2
+        }
+
+        # Create subscriptions and bind callbacks with the finger name
+        for finger_name, topic in self.contact_topics.items():
+            sub = self.create_subscription(
+                Contacts,
+                topic,
+                lambda msg, name=finger_name: self.contact_callback(msg, name_to_index.get(name, 0)),
+                10
+            )
+            self.subscriptions_list.append(sub)
+            self.get_logger().info(f'Subscribed to {finger_name} contacts on {topic}')
 
         # End-effector frames (order == actuator order)
         self.endpoint_frames = [
@@ -47,15 +81,37 @@ class MultiFingerEllipticalFFB(Node):
             'f2l3'    # finger2
         ]
 
-        self.get_logger().info('FFB node STARTED (paused)')
+        # Precompute dt for ramp step calculation
+        self._dt = 1.0 / self.control_rate_hz
+        self._ramp_step = (self.max_current * self._dt) / max(self.ramp_time, 1e-6)
+
+        status = 'ENABLED' if self.enabled else 'PAUSED'
+        self.get_logger().info(f'FFB node STARTED ({status})')
 
     def enable_callback(self, msg: Int8):
-        new_state = msg.data == 1
-        if new_state != self.enabled:
-            self.enabled = new_state
-            self.get_logger().info(
-                f"FFB node {'ENABLED' if self.enabled else 'PAUSED'}"
-            )
+            """Allows toggling while the node is running"""
+            # 1 = Enable, 0 = Disable
+            new_state = (msg.data == 1)
+            if new_state != self.enabled:
+                self.enabled = new_state
+                status = "ENABLED" if self.enabled else "PAUSED"
+                self.get_logger().info(f"FFB logic is now {status}")
+
+    def contact_callback(self, msg: Contacts, index: int):
+        """Handle contact messages for a given finger index.
+
+        When a contact is present, set the contact state True; when no
+        contacts are reported, set it False. We log transitions.
+        """
+        was = self.contact_state[index]
+        now = len(msg.contacts) > 0
+        if now and not was:
+            self.get_logger().info(f'COLLISION DETECTED: finger idx={index}')
+        if not now and was:
+            self.get_logger().info(f'CONTACT RELEASED: finger idx={index}')
+        self.contact_state[index] = now
+        # Set target for ramping: full current on contact, zero on release
+        self.ffb_targets[index] = self.max_current if now else 0.0
 
     def timer_callback(self):
         # ---------- PAUSE GATE ----------
@@ -65,39 +121,27 @@ class MultiFingerEllipticalFFB(Node):
             self.ffb_publisher.publish(zero)
             return
 
-        # ---------- Get Transforms ----------
-        transforms = []
-        try:
-            for frame in self.endpoint_frames:
-                tf: TransformStamped = self.tf_buffer.lookup_transform(
-                    'base',
-                    frame,
-                    rclpy.time.Time()
-                )
-                transforms.append(tf)
-        except Exception as e:
-            self.get_logger().warn(f"TF lookup failed: {e}")
-            return
-        
-        cmd = []
+        # ---------- Compute FFB Commands (with ramping) ----------
+        # Update currents towards targets linearly over ramp_time using precomputed step
+        for i in range(len(self.ffb_currents)):
+            target = self.ffb_targets[i]
+            cur = self.ffb_currents[i]
+            if cur < target:
+                cur = min(target, cur + self._ramp_step)
+            elif cur > target:
+                cur = max(target, cur - self._ramp_step)
+            self.ffb_currents[i] = cur
 
-        # ---------- Compute FFB Commands ----------
-        for tf in transforms:
-            x = tf.transform.translation.x
-            y = tf.transform.translation.y
-            z = tf.transform.translation.z
+        # Prepare command array from current ramped values
+        cmd = [self.ffb_currents[i] for i in range(len(self.ffb_currents))]
 
-            if z < 0.0:
-                cmd.append(-2*z)
-            else:
-                cmd.append(0)
-            
-            #clamp to [-100, 200]
-            cmd[-1] = max(-100.0, min(200.0, cmd[-1]))
-        
-        cmd[0] *= -1.0  # Thumb scaling
-        cmd[1] *= 1.0  # Finger1 scaling
-        cmd[2] *= -1.0  # Finger2 scaling            
+        # Clamp commands to a safe range and apply any required sign scaling
+        for i in range(len(cmd)):
+            cmd[i] = max(-100.0, min(200.0, cmd[i]))
+
+        cmd[0] *= -1.0  # Thumb scaling (direction)
+        cmd[1] *= 1.0   # Finger1 scaling
+        cmd[2] *= -1.0  # Finger2 scaling
 
         # ---------- Publish ----------
         msg = Float32MultiArray()
@@ -106,7 +150,7 @@ class MultiFingerEllipticalFFB(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = MultiFingerEllipticalFFB()
+    node = Sim_FFB()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
