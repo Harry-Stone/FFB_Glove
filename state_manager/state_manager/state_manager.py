@@ -201,7 +201,7 @@ class StateManager(Node):
         with self.lock:
             req.pose.position.x = 10 * float(self.haply_position[0])
             req.pose.position.y = 10 * float(self.haply_position[1])
-            req.pose.position.z = 3 + 10 * float(self.haply_position[2])
+            req.pose.position.z = 2 + 10 * float(self.haply_position[2])
 
             qx, qy, qz, qw = quaternion_from_euler(*self.imu_rpy)
             req.pose.orientation.x = qx
@@ -287,6 +287,9 @@ class StateManager(Node):
             positions[10] = self.base_positions[10] - math.radians(sd[9])
             positions[11] = self.base_positions[11] + math.radians(sd[8])
 
+            # Wrap angles to +/- pi to align with URDF safety limits
+            positions = [math.atan2(math.sin(p), math.cos(p)) for p in positions]
+
         except Exception as e:
             self.get_logger().warn(f"Joint update error: {e}")
 
@@ -330,7 +333,7 @@ class StateManager(Node):
         point = JointTrajectoryPoint()
         point.positions = self.get_current_positions()
         point.time_from_start.sec = 0
-        point.time_from_start.nanosec = 10000000  # 10ms
+        point.time_from_start.nanosec = 50000000  # 10ms
 
         traj.points.append(point)
 

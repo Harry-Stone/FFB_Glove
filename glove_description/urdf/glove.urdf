@@ -30,7 +30,7 @@
       </geometry>
     </collision>
     <inertial>
-      <mass value="0.1" />
+      <mass value="10" />
       <inertia ixx="3.47681235e-03" ixy="0" ixz="0" iyy="1.305506072e-03" iyz="0" izz="4.495360389e-03" />
     </inertial>
   </link>
@@ -323,48 +323,54 @@
     </inertial>
   </link>
   
-  <joint name="tl0_joint" type="continuous">
+  <joint name="tl0_joint" type="revolute">
     <origin xyz="0.57217976 0.83967529 -0.24119789" rpy="0 0 0" />
     <parent link="base" />
     <child link="tl0" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
   <joint name="Txc330_joint" type="fixed">
     <origin xyz="0.00220604 -0.31780266 0.01792219" rpy="0 0 0" />
     <parent link="tl0" />
     <child link="Txc330" />
   </joint>
-  <joint name="tl1_joint" type="continuous">
+  <joint name="tl1_joint" type="revolute">
     <origin xyz="0.00653183 0.00504234 -0.09755316" rpy="0 0 0" />
     <parent link="Txc330" />
     <child link="tl1" />
     <axis xyz="0 0 1" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="tl2_joint" type="continuous">
+  <joint name="tl2_joint" type="revolute">
     <origin xyz="-0.00382935 -0.99693802 0.00991375" rpy="0 0 0" />
     <parent link="tl1" />
     <child link="tl2" />
     <axis xyz="0 0 1" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="tl3_joint" type="continuous">
+  <joint name="tl3_joint" type="revolute">
     <origin xyz="-0.00062885 -0.59897427 0.00053812" rpy="0 0 0" />
     <parent link="tl2" />
     <child link="tl3" />
     <axis xyz="0 0 1" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
   <joint name="bridge_joint" type="fixed">
     <parent link="base" />
     <child link="bridge" />
   </joint>
-  <joint name="f1l0_joint" type="continuous">
+  <joint name="f1l0_joint" type="revolute">
     <origin xyz="0.17717194 -0.00927605 0.2041119" rpy="0 0 0" />
     <parent link="base" />
     <child link="f1l0" />
     <axis xyz="0 0 1" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
   <joint name="f1xc330_joint" type="fixed">
     <origin xyz="0.01793839 -0.31780258 -0.02094622" rpy="0 0 0" />
@@ -372,59 +378,66 @@
     <child link="f1xc330" />
     <dynamics damping="0" friction="0" />
   </joint>
-  <joint name="f1l1_joint" type="continuous">
+  <joint name="f1l1_joint" type="revolute">
     <origin xyz="-0.09750091 0.00504238 0.01160593" rpy="0 0 0" />
     <parent link="f1xc330" />
     <child link="f1l1" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="f1l2_joint" type="continuous">
+  <joint name="f1l2_joint" type="revolute">
     <origin xyz="0.00989426 -0.99801514 -0.00898172" rpy="0 0 0" />
     <parent link="f1l1" />
     <child link="f1l2" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="f1l3_joint" type="continuous">
+  <joint name="f1l3_joint" type="revolute">
     <origin xyz="-0.00267555 -0.59855103 -0.00097271" rpy="0 0 0" />
     <parent link="f1l2" />
     <child link="f1l3" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="f2l0_joint" type="continuous">
+  <joint name="f2l0_joint" type="revolute">
     <origin xyz="-0.17623764 -0.00927605 0.19505016" rpy="0 0 0" />
     <parent link="base" />
     <child link="f2l0" />
     <axis xyz="0 0 1" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
   <joint name="xc330_joint" type="fixed">
     <origin xyz="-0.01793839 -0.31780258 -0.01680552" rpy="0 0 0" />
     <parent link="f2l0" />
     <child link="f2xc330" />
   </joint>
-  <joint name="f2l1_joint" type="continuous">
+  <joint name="f2l1_joint" type="revolute">
     <origin xyz="0.09750091 0.00504238 0.02614582" rpy="0 0 0" />
     <parent link="f2xc330" />
     <child link="f2l1" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="f2l2_joint" type="continuous">
+  <joint name="f2l2_joint" type="revolute">
     <origin xyz="-0.00989425 -1.0017691 -0.02149185" rpy="0 0 0" />
     <parent link="f2l1" />
     <child link="f2l2" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
-  <joint name="f2l3_joint" type="continuous">
+  <joint name="f2l3_joint" type="revolute">
     <origin xyz="0.00267555 -0.5988974 -0.00220499" rpy="0 0 0" />
     <parent link="f2l2" />
     <child link="f2l3" />
     <axis xyz="1 0 0" />
-    <dynamics damping="0" friction="0" />
+    <limit lower="-12.121212" upper="12.121212" effort="10.0" velocity="20.0"/>
+    <dynamics damping="0.5" friction="0.1" />
   </joint>
 
   <gazebo reference="tl1"><self_collide>false</self_collide></gazebo>
