@@ -515,7 +515,7 @@
       <contact>
         <collision>f1l3_collision_collision</collision>
       </contact>
-      <topic>/contact/f1l3</topic>
+      <topic>f1l3_contact</topic>
     </sensor>
   </gazebo>
   <gazebo reference="f2l3">
@@ -525,7 +525,7 @@
       <contact>
         <collision>f2l3_collision_collision</collision>
       </contact>
-      <topic>/contact/f2l3</topic>
+      <topic>f2l3_contact</topic>
     </sensor>
   </gazebo>
   <gazebo reference="tl3">
@@ -535,9 +535,10 @@
       <contact>
         <collision>tl3_collision_collision</collision>
       </contact>
-      <topic>/contact/tl3</topic>
+      <topic>tl3_contact</topic>
     </sensor>
   </gazebo>
+
   
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
@@ -624,6 +625,15 @@
         <namespace>/</namespace>
       </ros>
       <parameters>/home/harry/glove/src/glove_description/config/controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+  <gazebo>
+    <plugin filename="gz-sim-touch-system" name="gz::sim::systems::Touch">
+      <target>f1l3</target>
+      <namespace>glove</namespace>
+      <time>0.001</time>
+      <enabled>true</enabled>
     </plugin>
   </gazebo>
   
