@@ -1,6 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<robot name="feedback_glove">
-  
+<robot name="glove">
+
+  <gazebo reference="base">
+    <kinematic>true</kinematic>
+    <gravity>false</gravity>
+  </gazebo>
+
   <material name="Material_004">
     <color rgba="0.800016 0.647821 0.007821 1" />
   </material>
@@ -26,7 +31,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="3.47681235e-07" ixy="0" ixz="0" iyy="1.305506072e-07" iyz="0" izz="4.495360389e-07" />
+      <inertia ixx="3.47681235e-03" ixy="0" ixz="0" iyy="1.305506072e-03" iyz="0" izz="4.495360389e-03" />
     </inertial>
   </link>
   <link name="tl0">
@@ -44,7 +49,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="2.78060312e-08" ixy="0" ixz="0" iyy="1.76689786e-08" iyz="0" izz="2.04088043e-08" />
+      <inertia ixx="2.78060312e-04" ixy="0" ixz="0" iyy="1.76689786e-04" iyz="0" izz="2.04088043e-04" />
     </inertial>
   </link>
   <link name="Txc330">
@@ -62,7 +67,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.53279662e-08" ixy="0" ixz="0" iyy="9.0894704e-09" iyz="0" izz="1.30281881e-08" />
+      <inertia ixx="1.53279662e-04" ixy="0" ixz="0" iyy="9.08947041e-04" iyz="0" izz="1.30281881e-04" />
     </inertial>
   </link>
   <link name="tl1">
@@ -80,7 +85,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.134359811e-07" ixy="0" ixz="0" iyy="4.0804613e-09" iyz="0" izz="1.148835649e-07" />
+      <inertia ixx="1.134359811e-03" ixy="0" ixz="0" iyy="4.08046131e-04" iyz="0" izz="1.148835649e-03" />
     </inertial>
   </link>
   <link name="tl2">
@@ -98,7 +103,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="4.68672576e-08" ixy="0" ixz="0" iyy="2.888513e-09" iyz="0" izz="4.73132356e-08" />
+      <inertia ixx="4.68672576e-04" ixy="0" ixz="0" iyy="2.8885131e-04" iyz="0" izz="4.73132356e-04" />
     </inertial>
   </link>
   <link name="tl3">
@@ -116,7 +121,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.96027654e-08" ixy="0" ixz="0" iyy="1.77137963e-08" iyz="0" izz="2.38185847e-08" />
+      <inertia ixx="1.96027654e-04" ixy="0" ixz="0" iyy="1.77137963e-04" iyz="0" izz="2.38185847e-04" />
     </inertial>
   </link>
   <link name="bridge">
@@ -134,7 +139,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.56854167e-08" ixy="0" ixz="0" iyy="5.55777768e-08" iyz="0" izz="4.65590268e-08" />
+      <inertia ixx="1.56854167e-04" ixy="0" ixz="0" iyy="5.55777768e-04" iyz="0" izz="4.65590268e-04" />
     </inertial>
   </link>
   <link name="f1l0">
@@ -152,7 +157,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="2.02887341e-08" ixy="0" ixz="0" iyy="1.74296889e-08" iyz="0" izz="2.76868117e-08" />
+      <inertia ixx="2.02887341e-04" ixy="0" ixz="0" iyy="1.74296889e-04" iyz="0" izz="2.76868117e-04" />
     </inertial>
   </link>
   <link name="f1xc330">
@@ -163,14 +168,14 @@
       <material name="Material_001" />
     </visual>
     <collision>
-      <origin xyz="0.06500004 0.07499996 2e-08" rpy="0 0 0" />
+      <origin xyz="0.06500004 0.07499996 2e-04" rpy="0 0 0" />
       <geometry>
         <box size="0.26000019 0.34000011 0.20000008" />
       </geometry>
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.29666757e-08" ixy="0" ixz="0" iyy="8.9666775e-09" iyz="0" izz="1.52666814e-08" />
+      <inertia ixx="1.29666757e-04" ixy="0" ixz="0" iyy="8.96667751e-04" iyz="0" izz="1.52666814e-04" />
     </inertial>
   </link>
   <link name="f1l1">
@@ -188,7 +193,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.153483722e-07" ixy="0" ixz="0" iyy="4.2798992e-09" iyz="0" izz="1.136482401e-07" />
+      <inertia ixx="1.153483722e-03" ixy="0" ixz="0" iyy="4.27989921e-04" iyz="0" izz="1.136482401e-03" />
     </inertial>
   </link>
   <link name="f1l2">
@@ -206,7 +211,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="4.74607877e-08" ixy="0" ixz="0" iyy="2.9317894e-09" iyz="0" izz="4.6929009e-08" />
+      <inertia ixx="4.74607877e-04" ixy="0" ixz="0" iyy="2.93178941e-04" iyz="0" izz="4.6929009e-04" />
     </inertial>
   </link>
   <link name="f1l3">
@@ -224,7 +229,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="2.09603377e-08" ixy="0" ixz="0" iyy="1.31740283e-08" iyz="0" izz="1.85848194e-08" />
+      <inertia ixx="2.09603377e-04" ixy="0" ixz="0" iyy="1.31740283e-04" iyz="0" izz="1.85848194e-04" />
     </inertial>
   </link>
   <link name="f2l0">
@@ -242,7 +247,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="2.02887341e-08" ixy="0" ixz="0" iyy="1.74296889e-08" iyz="0" izz="2.76868117e-08" />
+      <inertia ixx="2.02887341e-04" ixy="0" ixz="0" iyy="1.74296889e-04" iyz="0" izz="2.76868117e-04" />
     </inertial>
   </link>
   <link name="f2xc330">
@@ -253,14 +258,14 @@
       <material name="Material_001" />
     </visual>
     <collision>
-      <origin xyz="-0.06500002 0.07499998 2e-08" rpy="0 0 0" />
+      <origin xyz="-0.06500002 0.07499998 2e-04" rpy="0 0 0" />
       <geometry>
         <box size="0.26000006 0.34000004 0.20000002" />
       </geometry>
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.29666695e-08" ixy="0" ixz="0" iyy="8.9666698e-09" iyz="0" izz="1.52666713e-08" />
+      <inertia ixx="1.29666695e-04" ixy="0" ixz="0" iyy="8.96666981e-04" iyz="0" izz="1.52666713e-04" />
     </inertial>
   </link>
   <link name="f2l1">
@@ -278,7 +283,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.147957158e-07" ixy="0" ixz="0" iyy="3.9966837e-09" iyz="0" izz="1.133787885e-07" />
+      <inertia ixx="1.147957158e-03" ixy="0" ixz="0" iyy="3.99668371e-04" iyz="0" izz="1.133787885e-03" />
     </inertial>
   </link>
   <link name="f2l2">
@@ -296,7 +301,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="4.72666678e-08" ixy="0" ixz="0" iyy="2.8333371e-09" iyz="0" izz="4.6833336e-08" />
+      <inertia ixx="4.72666678e-04" ixy="0" ixz="0" iyy="2.83333711e-04" iyz="0" izz="4.6833336e-04" />
     </inertial>
   </link>
   <link name="f2l3">
@@ -314,7 +319,7 @@
     </collision>
     <inertial>
       <mass value="0.1" />
-      <inertia ixx="1.99381602e-08" ixy="0" ixz="0" iyy="1.26567715e-08" iyz="0" izz="1.80798697e-08" />
+      <inertia ixx="1.99381602e-04" ixy="0" ixz="0" iyy="1.26567715e-04" iyz="0" izz="1.80798697e-04" />
     </inertial>
   </link>
   
@@ -421,6 +426,25 @@
     <axis xyz="1 0 0" />
     <dynamics damping="0" friction="0" />
   </joint>
+
+  <gazebo reference="tl1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l1"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl2"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l2"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l2"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="tl3"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1l3"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2l3"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="base"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="bridge"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="Txc330"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f1xc330"><self_collide>false</self_collide></gazebo>
+  <gazebo reference="f2xc330"><self_collide>false</self_collide></gazebo>
+  
   <ros2_control name="GazeboSystem" type="system">
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>

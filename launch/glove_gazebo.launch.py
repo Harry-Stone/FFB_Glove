@@ -5,7 +5,6 @@ from launch.substitutions import Command, PathJoinSubstitution, EnvironmentVaria
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.parameter_descriptions import ParameterValue
 
-
 def generate_launch_description():
 
     robot_description = ParameterValue(
@@ -79,7 +78,7 @@ def generate_launch_description():
         # -----------------------
 
         ExecuteProcess(
-            cmd=['gz', 'sim', '-r', 'empty.sdf'],
+            cmd=['gz', 'sim', '-r', 'shapes.sdf'],
             output='screen'
         ),
 
@@ -98,14 +97,11 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # -----------------------
-        # Clock bridge
-        # -----------------------
-
         Node(
             package='ros_gz_bridge',
             executable='parameter_bridge',
             arguments=[
+                '/world/shapes/set_pose@ros_gz_interfaces/srv/SetEntityPose',
                 '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'
             ],
             output='screen'
@@ -140,6 +136,12 @@ def generate_launch_description():
         Node(
             package='encoder_reader',
             executable='encoder_reader',
+            output='screen'
+        ),
+
+        Node(
+            package='haply_connection_manager',
+            executable='haply_connection_manager',
             output='screen'
         ),
     ])

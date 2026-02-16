@@ -11,6 +11,8 @@ from sensor_msgs.msg import JointState
 from geometry_msgs.msg import TransformStamped
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 from tf2_ros import TransformBroadcaster
+from ros_gz_interfaces.srv import SetEntityPose
+
 
 def quaternion_from_euler(roll, pitch, yaw):
     """
@@ -102,7 +104,15 @@ class StateManager(Node):
         # IMU orientation (roll, pitch, yaw) in radians
         self.imu_rpy = [0.0, 0.0, 0.0]
 
-        self.haply_position = [0.0, 0.0, 0.0]
+        self.haply_position = [0.0, 0.0, 1.0]
+
+        if self.sim_mode:
+            self.set_pose_client = self.create_client(SetEntityPose, '/world/shapes/set_pose')
+            # spin waiting, no blocking forever
+            self.get_logger().info("Waiting for /world/shapes/set_pose service...")
+            while not self.set_pose_client.wait_for_service(timeout_sec=1.0):
+                self.get_logger().info("Still waiting for set_pose...")
+
 
         # =====================
         # Subscriptions
@@ -180,9 +190,27 @@ class StateManager(Node):
         # roll, pitch, yaw already in radians
         self.imu_rpy = [float(v) for v in msg.data]
 
-    # =====================
-    # TF publishing
-    # =====================
+    def update_sim_base_pose(self):
+        if not self.set_pose_client.service_is_ready():
+            return
+
+        req = SetEntityPose.Request()
+        # MUST match the name in your URDF or Spawn command
+        req.entity.name = "glove" 
+
+        with self.lock:
+            req.pose.position.x = 10 * float(self.haply_position[0])
+            req.pose.position.y = 10 * float(self.haply_position[1])
+            req.pose.position.z = 3 + 10 * float(self.haply_position[2])
+
+            qx, qy, qz, qw = quaternion_from_euler(*self.imu_rpy)
+            req.pose.orientation.x = qx
+            req.pose.orientation.y = qy
+            req.pose.orientation.z = qz
+            req.pose.orientation.w = qw
+
+        self.set_pose_client.call_async(req)
+
 
     def publish_base_tf(self):
         roll, pitch, yaw = self.imu_rpy
@@ -295,6 +323,7 @@ class StateManager(Node):
 
 
     def publish_to_simulation(self):
+        self.update_sim_base_pose()
         traj = JointTrajectory()
         traj.joint_names = self.joint_names
 
