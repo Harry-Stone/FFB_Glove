@@ -102,7 +102,7 @@ class StateManager(Node):
         self.dynamixel_positions = [0.0, 0.0, 0.0]
 
         # IMU orientation (roll, pitch, yaw) in radians
-        self.imu_rpy = [0.0, 0.0, 0.0]
+        self.imu_xyzw = [0.0, 0.0, 0.0, 0.0]
 
         self.haply_position = [0.0, 0.0, 1.0]
 
@@ -140,7 +140,7 @@ class StateManager(Node):
         try:
             self.imu_sub = self.create_subscription(
                 Float32MultiArray,
-                '/serial/imu',
+                'haply_orientation',
                 self.imu_callback,
                 10
             )
@@ -184,11 +184,9 @@ class StateManager(Node):
             self.get_logger().warn(f"Dynamixel data error: {e}")
 
     def imu_callback(self, msg):
-        if len(msg.data) != 3:
+        if len(msg.data) != 4:
             return
-
-        # roll, pitch, yaw already in radians
-        self.imu_rpy = [float(v) for v in msg.data]
+        self.imu_xyzw = [float(v) for v in msg.data]
 
     def update_sim_base_pose(self):
         if not self.set_pose_client.service_is_ready():
@@ -199,21 +197,19 @@ class StateManager(Node):
         req.entity.name = "glove" 
 
         with self.lock:
-            req.pose.position.x = 10 * float(self.haply_position[0])
-            req.pose.position.y = 10 * float(self.haply_position[1])
-            req.pose.position.z = 2 + 10 * float(self.haply_position[2])
-
-            qx, qy, qz, qw = quaternion_from_euler(*self.imu_rpy)
-            req.pose.orientation.x = qx
-            req.pose.orientation.y = qy
-            req.pose.orientation.z = qz
-            req.pose.orientation.w = qw
+            req.pose.position.x = 10 * self.haply_position[0]
+            req.pose.position.y = 10 * self.haply_position[1]
+            req.pose.position.z = 10 * self.haply_position[2] + 2
+            
+            req.pose.orientation.x = self.imu_xyzw[0]
+            req.pose.orientation.y = self.imu_xyzw[1]
+            req.pose.orientation.z = self.imu_xyzw[2]
+            req.pose.orientation.w = self.imu_xyzw[3]
 
         self.set_pose_client.call_async(req)
 
 
     def publish_base_tf(self):
-        roll, pitch, yaw = self.imu_rpy
         base_position = self.haply_position
 
         t = TransformStamped()
@@ -223,15 +219,14 @@ class StateManager(Node):
 
         t.transform.translation.x = 10 * base_position[0]
         t.transform.translation.y = 10 * base_position[1]
-        t.transform.translation.z = 10 * base_position[2]
+        t.transform.translation.z = 10 * base_position[2] + 2
 
-        self.get_logger().debug(f"Publishing TF - Position: {base_position}, RPY: {self.imu_rpy}")
+        self.get_logger().debug(f"Publishing TF - Position: {base_position}, XYZW: {self.imu_xyzw}")
 
-        q = quaternion_from_euler(roll, pitch, yaw)
-        t.transform.rotation.x = q[0]
-        t.transform.rotation.y = q[1]
-        t.transform.rotation.z = q[2]
-        t.transform.rotation.w = q[3]
+        t.transform.rotation.x = self.imu_xyzw[0]
+        t.transform.rotation.y = self.imu_xyzw[1]
+        t.transform.rotation.z = self.imu_xyzw[2]
+        t.transform.rotation.w = self.imu_xyzw[3]
 
         self.tf_broadcaster.sendTransform(t)
 
