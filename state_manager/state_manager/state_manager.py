@@ -32,6 +32,23 @@ def quaternion_from_euler(roll, pitch, yaw):
 
     return (qx, qy, qz, qw)
 
+def euler_from_quaternion(qx, qy, qz, qw):
+    """
+    Convert quaternion (x, y, z, w) to roll, pitch, yaw (radians)
+    """
+    sinr_cosp = 2 * (qw * qx + qy * qz)
+    cosr_cosp = 1 - 2 * (qx * qx + qy * qy)
+    roll = math.atan2(sinr_cosp, cosr_cosp)
+
+    sinp = 2 * (qw * qy - qz * qx)
+    pitch = math.asin(sinp)
+
+    siny_cosp = 2 * (qw * qz + qx * qy)
+    cosy_cosp = 1 - 2 * (qy * qy + qz * qz)
+    yaw = math.atan2(siny_cosp, cosy_cosp)
+
+    return roll, pitch, yaw
+
 
 
 # =========================
@@ -192,7 +209,11 @@ class StateManager(Node):
         if len(msg.data) != 4:
             return
         with self.lock:
-            self.imu_xyzw = [float(v) for v in msg.data]
+            qx, qy, qz, qw = [float(v) for v in msg.data]
+            roll, pitch, yaw = euler_from_quaternion(qx, qy, qz, qw)
+            roll, pitch, yaw = roll, pitch, yaw - math.pi / 2
+            qx, qy, qz, qw = quaternion_from_euler(roll, pitch, yaw)
+            self.imu_xyzw = [qx, qy, qz, qw]
 
     def update_sim_base_pose(self):
         if not self.set_pose_client.service_is_ready():
@@ -203,9 +224,9 @@ class StateManager(Node):
         req.entity.name = "glove" 
 
         with self.lock:
-            req.pose.position.x = 10 * self.haply_position[0]
-            req.pose.position.y = 10 * self.haply_position[1]
-            req.pose.position.z = 10 * self.haply_position[2] + 2
+            req.pose.position.x = -30 * self.haply_position[0] + 2.5
+            req.pose.position.y = -30 * self.haply_position[1] - 4
+            req.pose.position.z = 30 * self.haply_position[2]  - 2.5
             
             req.pose.orientation.x = self.imu_xyzw[0]
             req.pose.orientation.y = self.imu_xyzw[1]
