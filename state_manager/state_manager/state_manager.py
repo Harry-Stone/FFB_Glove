@@ -82,7 +82,7 @@ class StateManager(Node):
         self.dynamixel_positions = [0.0, 0.0, 0.0]
 
         # IMU orientation (roll, pitch, yaw) in radians
-        self.imu_rpy = [0.0, 0.0, 0.0]
+        self.imu_xyzw = [0.0, 0.0, 0.0, 0.0]
 
         self.haply_position = [0.0, 0.0, 0.0]
 
@@ -106,7 +106,7 @@ class StateManager(Node):
 
         self.imu_sub = self.create_subscription(
             Float32MultiArray,
-            '/serial/imu',
+            'haply_orientation',
             self.imu_callback,
             10
         )
@@ -145,18 +145,18 @@ class StateManager(Node):
             self.get_logger().warn(f"Dynamixel data error: {e}")
 
     def imu_callback(self, msg):
-        if len(msg.data) != 3:
+        if len(msg.data) != 4:
             return
 
-        # roll, pitch, yaw already in radians
-        self.imu_rpy = [float(v) for v in msg.data]
+        # x, y, z, w
+        self.imu_xyzw = [float(v) for v in msg.data]
 
     # =====================
     # TF publishing
     # =====================
 
     def publish_base_tf(self):
-        roll, pitch, yaw = self.imu_rpy
+        x, y, z, w = self.imu_xyzw
         base_position = self.haply_position
 
         t = TransformStamped()
@@ -164,17 +164,16 @@ class StateManager(Node):
         t.header.frame_id = 'world'
         t.child_frame_id  = 'base'
 
-        t.transform.translation.x = 1000 * base_position[0]
-        t.transform.translation.y = 1000 * base_position[1]
-        t.transform.translation.z = 1000 * base_position[2]
+        t.transform.translation.x = 10 * base_position[0]
+        t.transform.translation.y = 10 * base_position[1]
+        t.transform.translation.z = 10 * base_position[2]
 
-        self.get_logger().debug(f"Publishing TF - Position: {base_position}, RPY: {self.imu_rpy}")
+        self.get_logger().debug(f"Publishing TF - Position: {base_position}, XYZW: {self.imu_xyzw}")
 
-        q = quaternion_from_euler(roll, pitch, yaw)
-        t.transform.rotation.x = q[0]
-        t.transform.rotation.y = q[1]
-        t.transform.rotation.z = q[2]
-        t.transform.rotation.w = q[3]
+        t.transform.rotation.x = x
+        t.transform.rotation.y = y
+        t.transform.rotation.z = z
+        t.transform.rotation.w = w
 
         self.tf_broadcaster.sendTransform(t)
 
