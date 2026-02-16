@@ -2,6 +2,7 @@
 
 import rclpy
 from rclpy.node import Node
+import time
 
 from ros_gz_interfaces.msg import Contacts
 from std_msgs.msg import Float32MultiArray, Int8
@@ -13,6 +14,8 @@ class Sim_FFB(Node):
 
         self.declare_parameter('start_enabled', True)
         self.enabled = self.get_parameter('start_enabled').get_parameter_value().bool_value
+
+        self.last_contact_time = [0.0] * 3
 
         # --- Control rate ---
         self.control_rate_hz = 200.0
@@ -54,6 +57,12 @@ class Sim_FFB(Node):
         self.ffb_currents = [0.0] * 3
         self.max_current = 100.0  # mA to ramp to on contact
         self.ramp_time = 0.3  # seconds to ramp up/down
+        # Watchdog for contact messages: if no message for a finger within
+        # `contact_timeout`, treat as released. Times are stored per finger.
+        # Make watchdog timeout at least as long as the ramp time so
+        # intermittent contact messages don't prevent the ramp from completing.
+        self.contact_timeout = max(0.5, self.ramp_time)  # seconds
+        self.last_contact_time = [0.0] * 3
 
         # Create a subscriber for each finger. Map published finger names to
         # indices matching the endpoint order used for commands (thumb, f1, f2).
@@ -98,11 +107,9 @@ class Sim_FFB(Node):
                 self.get_logger().info(f"FFB logic is now {status}")
 
     def contact_callback(self, msg: Contacts, index: int):
-        """Handle contact messages for a given finger index.
+        # Record that we received a contact message for this finger
+        self.last_contact_time[index] = time.monotonic()
 
-        When a contact is present, set the contact state True; when no
-        contacts are reported, set it False. We log transitions.
-        """
         was = self.contact_state[index]
         now = len(msg.contacts) > 0
         if now and not was:
@@ -114,14 +121,23 @@ class Sim_FFB(Node):
         self.ffb_targets[index] = self.max_current if now else 0.0
 
     def timer_callback(self):
-        # ---------- PAUSE GATE ----------
+        # Watchdog: clear targets if no contact messages received recently
+        now_tm = time.monotonic()
+        for i in range(len(self.last_contact_time)):
+            if now_tm - self.last_contact_time[i] > self.contact_timeout:
+                if self.contact_state[i]:
+                    self.get_logger().debug(f'CONTACT TIMEOUT: clearing contact for finger idx={i}')
+                self.contact_state[i] = False
+                self.ffb_targets[i] = 0.0
+
+        # Pause gate: publish zeros when disabled
         if not self.enabled:
             zero = Float32MultiArray()
             zero.data = [0.0] * len(self.endpoint_frames)
             self.ffb_publisher.publish(zero)
             return
 
-        # ---------- Compute FFB Commands (with ramping) ----------
+        # Compute FFB Commands (with ramping)
         # Update currents towards targets linearly over ramp_time using precomputed step
         for i in range(len(self.ffb_currents)):
             target = self.ffb_targets[i]
@@ -143,7 +159,7 @@ class Sim_FFB(Node):
         cmd[1] *= 1.0   # Finger1 scaling
         cmd[2] *= -1.0  # Finger2 scaling
 
-        # ---------- Publish ----------
+        # Publish
         msg = Float32MultiArray()
         msg.data = cmd
         self.ffb_publisher.publish(msg)
@@ -151,9 +167,22 @@ class Sim_FFB(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = Sim_FFB()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Keyboard interrupt received, shutting down')
+        # Publish zero currents to ensure motors are released
+        try:
+            zero = Float32MultiArray()
+            zero.data = [0.0] * len(node.endpoint_frames)
+            node.ffb_publisher.publish(zero)
+            # Give ROS a moment to process the publish
+            rclpy.spin_once(node, timeout_sec=0.1)
+        except Exception:
+            pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
 
 
 if __name__ == '__main__':
