@@ -24,10 +24,15 @@ class Sim_FFB(Node):
             self.timer_callback
         )
 
-        # --- Publisher ---
+        # --- Publishers ---
         self.ffb_publisher = self.create_publisher(
             Float32MultiArray,
             'FFB',
+            10
+        )
+        self.haply_forces_publisher = self.create_publisher(
+            Float32MultiArray,
+            'haply_forces',
             10
         )
 
@@ -63,6 +68,16 @@ class Sim_FFB(Node):
         # intermittent contact messages don't prevent the ramp from completing.
         self.contact_timeout = max(0.5, self.ramp_time)  # seconds
         self.last_contact_time = [0.0] * 3
+        
+        # Contact-based force feedback to Haply
+        self.haply_force_z = 0.0  # Current ramped Z force
+        self.haply_force_target_z = 0.0  # Target Z force based on contacts
+        self.haply_force_ramp_time = 0.3  # seconds to ramp
+        self.haply_force_contributions = {  # Force per finger (1.0 per digit = 3.0 total)
+            0: 1.0,   # thumb
+            1: 1.0,   # index
+            2: 1.0,   # middle
+        }
 
         # Create a subscriber for each finger. Map published finger names to
         # indices matching the endpoint order used for commands (thumb, f1, f2).
@@ -130,6 +145,12 @@ class Sim_FFB(Node):
                 self.contact_state[i] = False
                 self.ffb_targets[i] = 0.0
 
+        # Compute Haply force target based on current contact states
+        # This includes both callback-updated and watchdog-cleared states
+        self.haply_force_target_z = sum(
+            self.haply_force_contributions[i] for i in range(3) if self.contact_state[i]
+        )
+
         # Pause gate: publish zeros when disabled
         if not self.enabled:
             zero = Float32MultiArray()
@@ -159,10 +180,23 @@ class Sim_FFB(Node):
         cmd[1] *= 1.0   # Finger1 scaling
         cmd[2] *= -1.0  # Finger2 scaling
 
-        # Publish
+        # Publish FFB currents
         msg = Float32MultiArray()
         msg.data = cmd
         self.ffb_publisher.publish(msg)
+
+        # Ramp Haply force Z-axis based on contact
+        max_force_z = max(self.haply_force_contributions.values())
+        ramp_step_haply = (max_force_z * self._dt) / max(self.haply_force_ramp_time, 1e-6)
+        if self.haply_force_z < self.haply_force_target_z:
+            self.haply_force_z = min(self.haply_force_target_z, self.haply_force_z + ramp_step_haply)
+        elif self.haply_force_z > self.haply_force_target_z:
+            self.haply_force_z = max(self.haply_force_target_z, self.haply_force_z - ramp_step_haply)
+
+        # Publish Haply force (x=0, y=0, z=ramped contact force)
+        haply_msg = Float32MultiArray()
+        haply_msg.data = [0.0, 0.0, self.haply_force_z]
+        self.haply_forces_publisher.publish(haply_msg)
 
 def main(args=None):
     rclpy.init(args=args)
