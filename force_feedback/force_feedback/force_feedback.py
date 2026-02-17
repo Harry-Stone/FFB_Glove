@@ -60,7 +60,7 @@ class Sim_FFB(Node):
         # Targets and current outputs for ramping
         self.ffb_targets = [0.0] * 3
         self.ffb_currents = [0.0] * 3
-        self.max_current = 100.0  # mA to ramp to on contact
+        self.max_current = 150.0  # mA to ramp to on contact
         self.ramp_time = 0.3  # seconds to ramp up/down
         # Watchdog for contact messages: if no message for a finger within
         # `contact_timeout`, treat as released. Times are stored per finger.
@@ -75,8 +75,8 @@ class Sim_FFB(Node):
         self.haply_force_ramp_time = 0.3  # seconds to ramp
         self.haply_force_contributions = {  # Force per finger (1.0 per digit = 3.0 total)
             0: 1.0,   # thumb
-            1: 1.0,   # index
-            2: 1.0,   # middle
+            1: 2.0,   # index
+            2: 2.0,   # middle
         }
 
         # Create a subscriber for each finger. Map published finger names to
