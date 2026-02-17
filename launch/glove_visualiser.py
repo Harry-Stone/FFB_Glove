@@ -48,11 +48,6 @@ def generate_launch_description():
             executable='haply_connection_manager',
         ),
 
-                Node(
-            package='imu',
-            executable='imu',
-        ),
-
         Node(
             package='rviz2',
             executable='rviz2'
