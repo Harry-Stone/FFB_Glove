@@ -20,7 +20,7 @@ public:
             "/channel_mask", 10,
             std::bind(&MultiAmpToneNode::mask_callback, this, std::placeholders::_1));
 
-        load_tone("/home/harry/glove/src/vibration_manager/audio/vibration_loop.flac");
+        load_tone("/home/kit-haptics/glove/src/vibration_manager/audio/vibration_loop.flac");
         open_device(&pcm_a_, "hw:1,0");
         open_device(&pcm_b_, "hw:2,0");
 
