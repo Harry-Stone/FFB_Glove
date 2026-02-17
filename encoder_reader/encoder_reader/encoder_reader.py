@@ -7,7 +7,7 @@ import json
 import os
 from ament_index_python.packages import get_package_share_directory
 import time
-
+import serial.tools.list_ports
 
 # ---------------- Config loading ----------------
 
@@ -50,12 +50,27 @@ class EncoderReaderNode(Node):
     def __init__(self):
         super().__init__('serial_reader')
 
-        # Serial parameters
-        self.declare_parameter('port', config['encoder_serial']['port'])
-        self.declare_parameter('baud', 115200)
+        # Hardware ID for Silicon Labs CP210x
+        TARGET_VID = 0x10C4
+        TARGET_PID = 0xEA60
 
-        port = self.get_parameter('port').value
-        baud = self.get_parameter('baud').value
+        # Auto-detect by Hardware ID
+        detected_port = None
+        ports = serial.tools.list_ports.comports()
+        self.get_logger().info(f"Scanning {len(ports)} serial ports for CP210x...")
+        for p in ports:
+            if p.vid == TARGET_VID and p.pid == TARGET_PID:
+                detected_port = p.device
+                self.get_logger().info(f"Detected CP210x at {p.device} (ID {p.vid:04x}:{p.pid:04x})")
+                break
+
+        if not detected_port:
+            # Final fallback to config if hardware is not found
+            detected_port = config['encoder_serial']['port']
+            self.get_logger().warn(f"Hardware ID 10c4:ea60 not found. Falling back to: {detected_port}")
+
+        self.declare_parameter('port', detected_port)
+        self.declare_parameter('baud', 115200)
 
         # Encoder config
         enc_cfg = config['encoders']
@@ -71,8 +86,8 @@ class EncoderReaderNode(Node):
 
         # Serial open
         try:
-            self.ser = serial.Serial(port, baud, timeout=0.01)
-            self.get_logger().info(f"Opened serial port {port} @ {baud}")
+            self.ser = serial.Serial(detected_port, 115200, timeout=0.01)
+            self.get_logger().info(f"Opened serial port {detected_port} @ 115200")
             self.get_logger().info(f"running in {self.units} mode with offsets: {self.offsets}")
         except Exception as e:
             raise RuntimeError(f"Failed to open serial port: {e}")

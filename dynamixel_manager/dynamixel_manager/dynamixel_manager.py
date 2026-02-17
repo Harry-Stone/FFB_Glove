@@ -9,6 +9,7 @@ import signal
 import sys
 from threading import Lock
 import math
+import serial.tools.list_ports
 
 from ament_index_python.packages import get_package_share_directory
 
@@ -78,7 +79,23 @@ except Exception as e:
 
 class DynamixelInterface:
     def __init__(self, port='/dev/ttyUSB1', baudrate=1000000, protocolVersion=2.0):
-        self.port = port
+        # Hardware ID for U2D2
+        TARGET_VID = 0x0403
+        TARGET_PID = 0x6014
+
+        # Auto-detect by Hardware ID
+        detected_port = None
+        ports = serial.tools.list_ports.comports()
+        for p in ports:
+            if p.vid == TARGET_VID and p.pid == TARGET_PID:
+                detected_port = p.device
+                break
+
+        if not detected_port:
+            # Final fallback to config if hardware is not found
+            detected_port = port
+            
+        self.port = detected_port
         self.baudrate = baudrate
         self.protocolVersion = protocolVersion
 
