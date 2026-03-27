@@ -60,12 +60,16 @@ class SpaceMouseNode(Node):
         try:
             state = self.device.read()
 
+            # Remap axes: X and Y swapped, roll/pitch/yaw corrected
+            # Position: x = y, y = x, z = z
+            # Orientation: roll = pitch, pitch = yaw, yaw = roll  
+
             # Update position (integrate velocity)
-            vel = np.array([state.x, state.y, state.z]) * self.sensitivity
+            vel = np.array([-state.y, state.x, state.z]) * self.sensitivity
             self.position += vel * dt
 
             # Update orientation (integrate angular velocity)
-            omega = np.array([state.roll, state.pitch, state.yaw]) * self.sensitivity
+            omega = np.array([-state.yaw, state.roll, -state.pitch]) * self.sensitivity
             omega_quat = np.array([0.0, omega[0], omega[1], omega[2]])
             q_dot = 0.5 * self.quat_mult(self.orientation, omega_quat)
             self.orientation += q_dot * dt

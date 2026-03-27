@@ -25,6 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'vibration_contactor = vibration_contactor.vibration_contactor:main',
         ],
     },
 )

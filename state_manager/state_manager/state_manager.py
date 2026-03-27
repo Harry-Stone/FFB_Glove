@@ -211,7 +211,7 @@ class StateManager(Node):
         with self.lock:
             qx, qy, qz, qw = [float(v) for v in msg.data]
             roll, pitch, yaw = euler_from_quaternion(qx, qy, qz, qw)
-            roll, pitch, yaw = roll, pitch, yaw - math.pi / 2
+            roll, pitch, yaw = roll, pitch, yaw  - (math.pi / 2) * 3 # 3 is space mouse only
             qx, qy, qz, qw = quaternion_from_euler(roll, pitch, yaw)
             self.imu_xyzw = [qx, qy, qz, qw]
 
@@ -226,7 +226,7 @@ class StateManager(Node):
         with self.lock:
             req.pose.position.x = -30 * self.haply_position[0] + 2.5
             req.pose.position.y = -30 * self.haply_position[1] - 4
-            req.pose.position.z = 30 * self.haply_position[2]  - 2.5
+            req.pose.position.z = 30 * self.haply_position[2]  + 1
             
             req.pose.orientation.x = self.imu_xyzw[0]
             req.pose.orientation.y = self.imu_xyzw[1]
