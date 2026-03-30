@@ -143,9 +143,18 @@ def generate_launch_description():
             output='screen'
         ),
 
-        Node(
-            package='haply_connection_manager',
-            executable='haply_connection_manager',
+        # Kill any existing haply_connection_manager to avoid conflicts
+        ExecuteProcess(
+            cmd=['ros2', 'node', 'kill', '/haply_connection_manager'],
+            output='screen'
+        ),
+
+        ExecuteProcess(
+            cmd=[
+                '/home/harry/glove/.venv/bin/python',
+                '-m',
+                'space_mouse.space_mouse'
+            ],
             output='screen'
         ),
 

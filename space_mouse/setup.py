@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'vibration_contactor'
+package_name = 'space_mouse'
 
 setup(
     name=package_name,
@@ -14,8 +14,8 @@ setup(
     package_data={'': ['py.typed']},
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='KIT Haptics',
-    maintainer_email='kit.haptics@gmail.com',
+    maintainer='Harry Stone',
+    maintainer_email='harrystone3301@gmail.com',
     description='TODO: Package description',
     license='TODO: License declaration',
     extras_require={
@@ -25,7 +25,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vibration_contactor = vibration_contactor.vibration_contactor:main',
+                'space_mouse = space_mouse.space_mouse:main',
         ],
     },
 )

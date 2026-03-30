@@ -2,6 +2,7 @@ from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch import LaunchDescription
+from launch.actions import ExecuteProcess
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 from launch.substitutions import PathJoinSubstitution, Command
@@ -43,9 +44,19 @@ def generate_launch_description():
             executable='encoder_reader',
         ),
 
-                Node(
-            package='haply_connection_manager',
-            executable='haply_connection_manager',
+        # Kill any existing haply_connection_manager to avoid conflicts
+        ExecuteProcess(
+            cmd=['ros2', 'node', 'kill', '/haply_connection_manager'],
+            output='screen'
+        ),
+
+        ExecuteProcess(
+            cmd=[
+                '/home/harry/glove/.venv/bin/python',
+                '-m',
+                'space_mouse.space_mouse'
+            ],
+            output='screen'
         ),
 
         Node(
