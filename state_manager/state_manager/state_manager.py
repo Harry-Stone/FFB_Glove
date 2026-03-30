@@ -224,8 +224,8 @@ class StateManager(Node):
         req.entity.name = "glove" 
 
         with self.lock:
-            req.pose.position.x = -30 * self.haply_position[0] + 2.5
-            req.pose.position.y = -30 * self.haply_position[1] - 4
+            req.pose.position.x = -30 * self.haply_position[0] + 2
+            req.pose.position.y = -30 * self.haply_position[1] - 2
             req.pose.position.z = 30 * self.haply_position[2]  + 1
             
             req.pose.orientation.x = self.imu_xyzw[0]

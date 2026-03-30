@@ -69,7 +69,7 @@ class SpaceMouseNode(Node):
             self.position += vel * dt
 
             # Update orientation (integrate angular velocity)
-            omega = np.array([-state.yaw, state.roll, -state.pitch]) * self.sensitivity
+            omega = np.array([-2*state.yaw, 2*state.roll, -state.pitch]) * self.sensitivity
             omega_quat = np.array([0.0, omega[0], omega[1], omega[2]])
             q_dot = 0.5 * self.quat_mult(self.orientation, omega_quat)
             self.orientation += q_dot * dt
