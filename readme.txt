@@ -1,4 +1,11 @@
 This is the repository for a three fingered force feedback glove.
+
+A 3D model of the glove as a URDF
+![A 3D model of the glove as a URDF](readme_images/URDF.png)
+
+The whole system
+![the glove running a visualiser](readme_images/live.png)
+
 The Software is provided as is and is not maintined, but if you have questions I can be contacted through Github
 or you can steal the email address associted with the drive link below and use that
 
